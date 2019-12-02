@@ -206,6 +206,7 @@ func PreHand(h http.HandlerFunc) http.HandlerFunc{
 			ErrorResponse(w,r,err,403)
 			return
 		}
+		logs.Info("RequestURI",r.RequestURI)
 		if r.RequestURI!="getmes"{
 			if r.Method!="POST"{
 				err:=fmt.Errorf("Method is error")

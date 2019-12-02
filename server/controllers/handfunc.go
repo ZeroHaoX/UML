@@ -31,9 +31,9 @@ func LoginHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	username,ok:=data["username"].(string)
+	username,ok:=data["userName"].(string)
 	if !ok{
-		err=fmt.Errorf("get username error")
+		err=fmt.Errorf("get userName error")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
@@ -57,7 +57,10 @@ func LoginHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
+	logs.Info("能够运行到这里")
 	user,ok,err:=models.CheckUserMes(username,password)
+	logs.Info("user=",user)
+	logs.Info("ok",ok)
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
@@ -107,7 +110,7 @@ func LoginHand(w http.ResponseWriter,r *http.Request){
 	http.SetCookie(w,cookie)
 	
 	SuccessResponse(w,r,userMes,"登录成功",0)
-	
+
 }
 
 //注册

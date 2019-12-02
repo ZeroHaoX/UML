@@ -36,11 +36,9 @@ export class LoginComponent implements OnInit {
     const httpOptions={
       headers:new HttpHeaders({'Content-Type':'application/json'})
     }
-    var api="/api/login"
-    this.http.post(api,{"account":this.validateForm.controls.userName.value,"password":this.validateForm.controls.password.value},httpOptions).subscribe((response:any)=>{ 
-      console.log(response)
+    this.loginServic.login(this.validateForm.controls.userName.value,this.validateForm.controls.password.value).subscribe((response:any)=>{
+      console.log("用户不存在")
     })
-    // this.loginServic.login().subscribe
   }
 
 }

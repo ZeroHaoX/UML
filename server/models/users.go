@@ -16,6 +16,14 @@ type User struct{
 	Phone string `json:"phone"`
 	Role string	`json:"role"`
 }
+type User1 struct{
+	// Uno string `json:"uno"`
+	UserName string	`json:"userName"`
+	Name string `json:"name"`
+	Phone string `json:"phone"`
+	Role string	`json:"role"`
+	Password string	`json:"password"`
+}
 
 type UserView struct{
 	User
@@ -94,7 +102,8 @@ func ShowUserList(page int,pageSize int,orderBy string)(users []*User,err error)
 }
 
 //检验信息
-func CheckUserMes(userName,password string)(user *User,ok bool,err error){
+func CheckUserMes(userName,password string)(user *User1,ok bool,err error){
+	user = new(User1)
 	if userName==""||common.HasSpecialCharacter(userName){
 		err=fmt.Errorf("username is error:userName=%v",userName)
 		logs.Error(err)
@@ -105,13 +114,16 @@ func CheckUserMes(userName,password string)(user *User,ok bool,err error){
 		logs.Error(err)
 		return
 	}
-	row:=db.QueryRow("select * from users where uername=$1 and password=$2",userName,password)
+	row:=db.QueryRow("select username,name,phone,role,password from users where username=$1 and password=$2",userName,password)
+	logs.Info("row",row)
 	if row==nil{
 		ok=false
 	}else{
-		err=row.Scan(&user.Name,&user.ActualName,&user.Phone,&user.Role)
-		if err!=nil{
-			logs.Error(err)
+		fmt.Printf("%T\n",user.UserName)
+		row.Scan(&user.UserName,&user.Name,&user.Phone,&user.Role,&user.Password)
+		logs.Info("UserName=",user.UserName,user.Name)
+		if(user.UserName==""){
+			logs.Info("用户不存在")
 			return
 		}
 		ok=true

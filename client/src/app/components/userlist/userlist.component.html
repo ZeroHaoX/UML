@@ -1,0 +1,50 @@
+<nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a>首页</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item>
+      用户管理
+    </nz-breadcrumb-item>
+</nz-breadcrumb>
+<h1 style="margin-top: 20px;">用户列表</h1>
+
+<div style="margin: 20px;width: 40%;">
+    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input type="text" nz-input placeholder="请输入用户名"/>
+    </nz-input-group>
+    <ng-template #suffixIconButton>
+            <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
+    </ng-template>
+</div>
+
+<div class="table">
+    <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="users">
+        <thead>
+            <tr>
+                <th nzAlign='center'>用户名</th>
+                <th nzAlign='center'>姓名</th>
+                <th nzAlign='center'>联系方式</th>
+                <th nzAlign='center'>角色</th>
+                <th nzAlign='center'>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users let i=index" style="background: white;">
+                <td nzAlign='center'>{{ user.UserName }}</td>
+                <td nzAlign='center'>{{ user.ActualName }}</td>
+                <td nzAlign='center'>{{ user.Phone }}</td>
+                <td nzAlign='center'>{{ user.Role }}</td>
+                <td nzAlign='center'>
+                    <a (click)="showUpdateModel(user)">修改</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <a style="color: orange;" (click)="remove(user)">删除</a>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>
+<nz-modal [(nzVisible)]="updateModel" nzTitle="信息修改" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+        <span>用户名：</span><input nz-input placeholder="用户名" nzSize="large" style="margin-bottom: 10px;"  [(ngModel)]="selectedUser.UserName"/>
+        <span>姓名：</span><input nz-input placeholder="姓名" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.ActualName"/>
+        <span>联系方式：</span><input nz-input placeholder="联系方式" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.Phone"/>
+</nz-modal>

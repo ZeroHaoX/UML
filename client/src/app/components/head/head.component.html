@@ -1,0 +1,20 @@
+<h2 class="logo">商品管理系统</h2>
+<ul nz-menu nzMode="horizontal" nzTheme="dark">
+        <li nz-submenu nzTitle="基础功能" nzIcon="appstore">
+            <ul>
+                <li nz-menu-item style="text-align: center;">日志管理</li>
+                <li nz-menu-item style="text-align: center;" routerLink="/userlist">用户管理</li>
+            </ul>
+        </li>
+        <li nz-submenu nzTitle="商品管理" nzIcon="setting">
+          <ul>
+            <li nz-menu-item style="text-align: center;">商品出货</li>
+            <li nz-menu-item style="text-align: center;">商品进货</li>
+            <li nz-menu-item style="text-align: center;" routerLink="/goodslist">商品信息维护</li>
+          </ul>
+        </li>
+        <li nz-menu-item>
+            <i nz-icon nzType="bar-chart"></i>
+            月结统计
+        </li>
+</ul>

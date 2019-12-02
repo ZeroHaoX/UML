@@ -1,0 +1,49 @@
+
+
+.content{
+    position: absolute;
+    background-color:  #fff;
+    margin: 0 auto;
+    top: 50%;
+    left: 50%;
+    width: 330px;
+    height: 400px;
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    border: 1px solid #a0b1c4;
+    border-radius: 5px;
+    
+}
+
+.describe{
+    /* background-color: gray; */
+    width: 330px;
+    height: 46px;
+    border-bottom: 1px solid #a0b1c4;
+}
+
+.header{
+    text-align: center;
+    line-height: 50px;
+}
+
+.info{
+    text-align: center;
+    padding-left: 10px;
+    margin-top: 30px;
+}
+
+.login-form {
+    max-width: 300px;
+  }
+
+  .login-form-forgot {
+    float: right;
+  }
+
+  .login-form-button {
+    width: 100%;
+  }

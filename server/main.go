@@ -5,6 +5,7 @@ import (
 	"./logger"
 	"log"
 	"net/http"
+	"./models"
 	"./controllers"
 )
 
@@ -12,6 +13,10 @@ func main(){
 	err:=logger.InitLogger()
 	if err!=nil{
 		log.Panic("初始化日志失败")
+	}
+
+	if err:=models.InitDB();err!=nil{
+		log.Panic("初始化数据库失败")
 	}
 	
 	http.HandleFunc("/login",controllers.PreHand(controllers.LoginHand))
@@ -23,7 +28,7 @@ func main(){
 	http.HandleFunc("/goods/del",controllers.CheckTokenPreHand(controllers.UpdateGoodsMes))
 	http.HandleFunc("/users",controllers.CheckTokenPreHand(controllers.UsersListHand))
 	
-	err=http.ListenAndServe(":8888",nil)
+	err=http.ListenAndServe(":8080",nil)
 	if err!=nil{
 		logs.Error(err)
 		return

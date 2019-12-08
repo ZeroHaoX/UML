@@ -269,3 +269,18 @@
 2019/12/08 16:02:42.440 [D] [account.go:23]  2019-1201
 2019/12/08 16:02:42.459 [E] [im_records.go:139]  pq: operator does not exist: date > integer
 2019/12/08 16:02:42.469 [E] [handfunc.go:1035]  pq: operator does not exist: date > integer
+2019/12/08 16:03:50.822 [D] [account.go:23]  2019-1201
+2019/12/08 16:03:50.846 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 16:03:50.847 [D] [account.go:23]  2019-1201
+2019/12/08 16:03:50.857 [E] [im_records.go:139]  pq: syntax error at or near ":"
+2019/12/08 16:03:50.862 [E] [handfunc.go:1035]  pq: syntax error at or near ":"
+2019/12/08 16:07:11.215 [D] [account.go:23]  2019-1201
+2019/12/08 16:07:11.237 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 16:07:11.238 [D] [account.go:23]  2019-1201
+2019/12/08 16:07:11.247 [E] [im_records.go:139]  pq: syntax error at or near "\"
+2019/12/08 16:07:11.249 [E] [handfunc.go:1035]  pq: syntax error at or near "\"
+2019/12/08 16:07:29.802 [D] [account.go:23]  2019-1201
+2019/12/08 16:07:29.823 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 16:07:29.827 [D] [account.go:23]  2019-1201
+2019/12/08 16:07:29.836 [E] [im_records.go:139]  pq: invalid input syntax for type date: "2019-1201"
+2019/12/08 16:07:29.846 [E] [handfunc.go:1035]  pq: invalid input syntax for type date: "2019-1201"

@@ -133,7 +133,7 @@ func SearchImports(id string)(importRecord *ImportRecord,err error){
 func SearchImportsByTime(year int,month int)(importRecords []ImportRecord,err error){
 	nextDate:=nextMonth(year,month)
 	nowDate:=timeToString(year,month)
-	queryString:=fmt.Sprintf("Select imid,gname,imprice,imtotalprice,imcount,detial,shipper,sphone,imdate from import_records where imdate>%v:date and imdate<%v:date ",nowDate,nextDate)
+	queryString:=fmt.Sprintf(`Select imid,gname,imprice,imtotalprice,imcount,detial,shipper,sphone,imdate from import_records where imdate>='%v' and imdate<'%v' `,nowDate,nextDate)
 	rows,err:=db.Query(queryString)
 	if err!=nil{
 		logs.Error(err)

@@ -19,7 +19,7 @@ func timeToString(year int ,month int)(timeString string){
 		m=strconv.Itoa(month)
 	}
 	y:=strconv.Itoa(year)
-	timeString= y+"-"+m+"01"
+	timeString= y+"-"+m+"-01"
 	logs.Debug(timeString)
 	return 
 }

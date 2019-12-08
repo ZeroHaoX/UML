@@ -1,14 +1,14 @@
 export class ExportRe{
-    edate?:number
-    ecount?:number
+    eid?:string
     eprice?:number
+    ecount?:number
     etotalprice?:number
     buyer?:string
     detial?:string
-    eid?:string
+    imdate?:string
     gname?:string
     shipper?:string
     bphone?:string
     profit?:number
-    imdate?:string
+    edate?:number
 }

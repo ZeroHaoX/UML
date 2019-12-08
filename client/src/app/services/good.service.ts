@@ -5,6 +5,7 @@ import {ReplyProto,ReqProto} from './protocal'
 import {HttpHeaders, HttpClient, HttpResponse, HttpErrorResponse} from '@angular/common/http';
 import {Good} from '../components/goodslist/good'
 import {ImportRecord} from '../components/import/importrecord'
+import { ExportRe } from '../components/amount/exportRe';
 
 @Injectable({
 
@@ -97,6 +98,24 @@ export class GoodService {
       catchError(err=>this.handleError(err))
     )
   }
+
+  // 月结出货记录
+  ExportRecord(year:string,month:string):Observable<ReplyProto>{
+    if(year==null||typeof year=='undefined'||year==""){
+      console.error("year is null")
+      return of({status:-1,msg:"year is nil"})
+    }
+    if(month==null||typeof month=='undefined'||month==""){
+      console.error("month is null")
+      return of({status:-1,msg:"month is nil"})
+
+    }
+    let api='/api/export/query?year='+year+"&"+"month="+month
+    return  this.http.get<ReplyProto>(api).pipe(
+      catchError(err=>this.handleError(err))
+    )
+  }
+  
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

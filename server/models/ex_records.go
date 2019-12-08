@@ -10,25 +10,27 @@ import (
 )
 
 type ExportRecord struct{
-	ID string	`json:"id"`
+	ID string	`json:"eid"`
 	Edate string	`json:"edate"`
-	GID string	`json:"gid"`
+	// GID string	`json:"gid"`
+	ImDate string 	`json:"imdate"`
+	Shipper string	`json:"shipper"`
 	GoodName string	`json:"gname"`
-	Count int	`json:"ecount"`
+	Count int		`json:"ecount"`
 	Price float32	`json:"eprice"`
 	TotalPrice float32	`json:"etotalprice"`
 	Buyer string	`json:"buyer"`
-	Phone string	`json:"phone"`
+	Phone string	`json:"bphone"`
 	Detial string	`json:"detial"`
 	// Profit float32	`json:"profit"`
 }
 
-func strToTimeStr(year int,month int)(timeString string){
+func nextMonth(year int,month int)(timeString string){
 	var m string
 	if month<10{
 		m="0"+strconv.Itoa(month)
 	}
-	if month==13{
+	if month==12{
 		year++
 		m="0"+strconv.Itoa(1)
 	}
@@ -36,6 +38,7 @@ func strToTimeStr(year int,month int)(timeString string){
 	// 	d="0"+strconv.Itoa(month)
 	// }
 	timeString=fmt.Sprintf("%v-%v-01",year,m)
+	logs.Debug(timeString)
 	return
 }
 
@@ -45,8 +48,8 @@ func ExportList(year int,month int)(exportList []*ExportRecord,err error){
 		logs.Error(err)
 		return
 	}
-	start:=strToTimeStr(year,month)
-	end:=strToTimeStr(year,month+1)
+	start:=nextMonth(year,month)
+	end:=nextMonth(year,month+1)
 	rows,err:=db.Query("select * from export_records_view(id,gid,gname,eprice,etotalprice,ecount,detial,buyer,phone,edate) where edate>=$1::timestamp and edate<$2::timestamp",start,end)
 	if err!=nil{
 		logs.Error(err)
@@ -54,7 +57,7 @@ func ExportList(year int,month int)(exportList []*ExportRecord,err error){
 	}
 	for rows.Next(){
 		var exoprtRecord ExportRecord
-		err=rows.Scan(&exoprtRecord.ID,&exoprtRecord.GID,&exoprtRecord.GoodName,&exoprtRecord.Price,&exoprtRecord.TotalPrice,&exoprtRecord.Count,&exoprtRecord.Detial,&exoprtRecord.Buyer,&exoprtRecord.Phone,exoprtRecord.Edate)
+		err=rows.Scan(&exoprtRecord.ID,&exoprtRecord.ImDate,&exoprtRecord.GoodName,&exoprtRecord.Price,&exoprtRecord.TotalPrice,&exoprtRecord.Count,&exoprtRecord.Detial,&exoprtRecord.Buyer,&exoprtRecord.Phone,exoprtRecord.Edate)
 		if err!=nil{
 			logs.Error(err)
 			return
@@ -74,7 +77,7 @@ func Exoprt(exportRecord *ExportRecord)(err error){
 		logs.Error(err)
 		return
 	}
-	_,err=stmt.Exec(exportRecord.ID,exportRecord.GID,exportRecord.Count,exportRecord.Price,exportRecord.TotalPrice,exportRecord.Buyer,exportRecord.Phone,exportRecord.Detial)
+	_,err=stmt.Exec(exportRecord.ID,exportRecord.ImDate,exportRecord.Count,exportRecord.Price,exportRecord.TotalPrice,exportRecord.Buyer,exportRecord.Phone,exportRecord.Detial)
 	if err!=nil{
 		err=fmt.Errorf("Export stmt error:%v",err)
 		logs.Error(err)
@@ -94,7 +97,7 @@ func UpdateExport(exportRecord *ExportRecord)(err error){
 		logs.Error(err)
 		return
 	}
-	_,err=stmt.Exec(exportRecord.GID,exportRecord.GoodName,exportRecord.Price,exportRecord.Count,exportRecord.TotalPrice,exportRecord.Buyer,exportRecord.Phone,exportRecord.Detial,exportRecord.ID)
+	_,err=stmt.Exec(exportRecord.ImDate,exportRecord.GoodName,exportRecord.Price,exportRecord.Count,exportRecord.TotalPrice,exportRecord.Buyer,exportRecord.Phone,exportRecord.Detial,exportRecord.ID)
 	if err!=nil{
 		logs.Error(err)
 		return
@@ -130,10 +133,30 @@ func SearchExportList(id string)(exportRecord *ExportRecord,err error){
 	if row==nil{
 		return
 	}
-	err=row.Scan(&exportRecord.ID,&exportRecord.GID,exportRecord.GoodName,exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate)
+	err=row.Scan(&exportRecord.ID,&exportRecord.ImDate,exportRecord.GoodName,exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate)
 	if err!=nil{
 		logs.Error(err)
 		return
+	}
+	return
+}
+
+func SearchExportListByTime(year int,month int)(exportRecords []ExportRecord,err error){
+	nextDate:=nextMonth(year,month)
+	nowDate:=timeToString(year,month)
+	rows,err:=db.Query("Select eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate from import_records where imdate>=$1 and imdate<$2 order by eid asc",nowDate,nextDate)
+	if err!=nil{
+		logs.Error(err)
+		return
+	}
+	for rows.Next(){
+		var exportRecord ExportRecord
+		err=rows.Scan(&exportRecord.ID,&exportRecord.ImDate,exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate)
+		if err!=nil{
+			logs.Error(err)
+			return
+		}
+		exportRecords=append(exportRecords,exportRecord)
 	}
 	return
 }

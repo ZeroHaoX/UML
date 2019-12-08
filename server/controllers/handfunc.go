@@ -8,7 +8,7 @@ import (
 	"../models"
 	"fmt"
 	"errors"
-	// "strconv"
+	"strconv"
 )
 
 //登录
@@ -256,19 +256,19 @@ func ExportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	exportRecord.GID,ok=data["gid"].(string)
-	if !ok{
-		err=fmt.Errorf("ExportHand get gid error")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	if exportRecord.GID==""||common.HasSpecialCharacter(exportRecord.GID){
-		err=fmt.Errorf("ExportHand get gid=%v",exportRecord.GID)
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
+	// exportRecord.GID,ok=data["gid"].(string)
+	// if !ok{
+	// 	err=fmt.Errorf("ExportHand get gid error")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	// if exportRecord.GID==""||common.HasSpecialCharacter(exportRecord.GID){
+	// 	err=fmt.Errorf("ExportHand get gid=%v",exportRecord.GID)
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
 	exportRecord.GoodName,ok=data["gname"].(string)
 	if !ok{
 		err=fmt.Errorf("ExportHand get gname error")
@@ -989,7 +989,7 @@ func MonthlyHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	ok,err:=models.CheckPermission(role,"月结管理")
+	ok,err:=models.CheckPermission(role,"月结统计")
 	if err!=nil{
 		err=fmt.Errorf("MonthlyHand check permission error:%v",err)
 		logs.Error(err)
@@ -1000,53 +1000,55 @@ func MonthlyHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,errors.New("权限不足！"),403)
 		return
 	}
-	body,err:=ReadBodyData(r)
+	data:=r.URL.Query()
+	yearString:=data.Get("year")
+	year,err:=strconv.Atoi(yearString)
 	if err!=nil{
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	data,ok:=body["data"].(map[string]interface{})
-	if !ok{
-		err=fmt.Errorf("MonthlyHand get data error")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	if data==nil{
-		err=fmt.Errorf("MonthlyHand get data nil")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	year,ok:=data["year"].(int)
-	if !ok{
 		err=fmt.Errorf("MonthlyHand get year error")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	day,ok:=data["day"].(int)
-	if !ok{
-		err=fmt.Errorf("MonthlyHand get day error")
+	monthString:=data.Get("month")
+	month,err:=strconv.Atoi(monthString)
+	if err!=nil{
+		err=fmt.Errorf("MonthlyHand get month error")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	if !common.CheckDate(year,day){
-		err=fmt.Errorf("MonthlyHand get year=%v,day=%v",year,day)
+	if !common.CheckDate(year,month){
+		err=fmt.Errorf("MonthlyHand get year=%v,day=%v",year,month)
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	account,err:=models.GetAccount(year,day)
+	account,err:=models.GetAccount(year,month)
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
 
-	SuccessResponse(w,r,account,"查询成功！",1)
+	importList,err:=models.SearchImportsByTime(year,month)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+
+	exportList,err:=models.SearchExportListByTime(year,month)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	respData:=make(map[string]interface{})
+	respData["account"]=account
+	respData["imrecord"]=importList
+	respData["erecord"]=exportList
+
+	SuccessResponse(w,r,respData,"查询成功！",1)
 }
 
 //删除商品信息
@@ -1253,7 +1255,62 @@ func SearchExportHand(w http.ResponseWriter,r *http.Request){
 
 //查找进货信息
 func SearchImportHand(w http.ResponseWriter,r *http.Request){
+	role,ok:=r.Context().Value("role").(string)
+	if !ok{
+		err:=fmt.Errorf("SearchGoodsHand get role form context error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if role==""{
+		err:=fmt.Errorf("SearchGoodsHand can't get role form context")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	ok,err:=models.CheckPermission(role,"进货记录查询")
+	if err!=nil{
+		err=fmt.Errorf("SearchGoodsHand check permission error:%v",err)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if !ok{
+		ErrorResponse(w,r,errors.New("权限不足！"),403)
+		return
+	}
+	data:=r.URL.Query()
+	yearString:=data.Get("year")
+	year,err:=strconv.Atoi(yearString)
+	if err!=nil{
+		err=fmt.Errorf("SearchImportHand get year error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	monthString:=data.Get("month")
+	month,err:=strconv.Atoi(monthString)
+	if err!=nil{
+		err=fmt.Errorf("SearchImportHand get month error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if !common.CheckDate(year,month){
+		err=fmt.Errorf("SearchImportHand get year=%v,day=%v",year,month)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	
+	importList,err:=models.SearchImportsByTime(year,month)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
 
+	SuccessResponse(w,r,importList,"查找成功",len(importList))
 }
 
 //获取用户信息接口

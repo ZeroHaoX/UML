@@ -16,6 +16,14 @@ type User struct{
 	Phone string `json:"phone"`
 	Role string	`json:"role"`
 }
+// type User1 struct{
+// 	// Uno string `json:"uno"`
+// 	UserName string	`json:"userName"`
+// 	Name string `json:"name"`
+// 	Phone string `json:"phone"`
+// 	Role string	`json:"role"`
+// 	Password string	`json:"password"`
+// }
 
 type UserView struct{
 	User
@@ -99,6 +107,7 @@ func ShowUserList(page int,pageSize int,orderBy string)(users []User,err error){
 
 //检验信息
 func CheckUserMes(userName,password string)(user *User,ok bool,err error){
+	user = new(User)
 	if userName==""||common.HasSpecialCharacter(userName){
 		err=fmt.Errorf("username is error:userName=%v",userName)
 		logs.Error(err)

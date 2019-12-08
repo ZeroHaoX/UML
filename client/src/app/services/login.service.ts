@@ -10,7 +10,7 @@ import { catchError } from 'rxjs/operators';
 export class LoginService {
 
   constructor(
-    public http:HttpClient
+    public http: HttpClient
   ) { }
      //请求数据实例
   private reqProto: ReqProto = {

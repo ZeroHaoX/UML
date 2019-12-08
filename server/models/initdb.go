@@ -16,6 +16,7 @@ var (
 	user="postgres"
 	password="postgres"
 	dbname="uml"
+	sslmode = "disable"
 )
 
 func InitDB()(err error){
@@ -25,6 +26,11 @@ func InitDB()(err error){
 	if err!=nil{
 		logs.Error(err)
 		return
+	}
+	if err=db.Ping();err!=nil{
+		err = fmt.Errorf("连接数据库失败",err)
+		logs.Info(err)
+		return 
 	}
 	return
 }

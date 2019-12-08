@@ -1,1 +1,139 @@
 2019/12/02 22:14:47.662 [E] [handfunc.go:24]  get data error
+2019/12/02 22:41:54.131 [E] [handfunc.go:37]  get username error
+2019/12/02 22:42:48.084 [E] [handfunc.go:38]  get username error
+2019/12/02 22:43:49.984 [E] [handfunc.go:38]  get username error
+2019/12/02 22:44:54.316 [E] [handfunc.go:39]  get username error
+2019/12/02 22:45:35.584 [E] [handfunc.go:39]  get username error
+2019/12/02 22:45:36.199 [E] [handfunc.go:39]  get username error
+2019/12/02 22:46:13.571 [E] [handfunc.go:25]  get data error
+2019/12/02 22:46:50.061 [E] [handfunc.go:39]  get username error
+2019/12/02 22:47:42.737 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 22:50:48.023 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 22:51:28.734 [I] [handfunc.go:60]  CheckUserMes
+2019/12/02 22:51:28.782 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 22:52:39.798 [I] [users.go:98]  userName: fdsf password: fsdaf
+2019/12/02 22:52:39.857 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 22:54:16.711 [I] [users.go:98]  userName: fdsf password: fsdaf
+2019/12/02 22:54:16.714 [I] [users.go:104]  匹配数据结果： 0x6cac40
+2019/12/02 22:54:16.784 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 22:54:50.584 [I] [users.go:98]  userName: fdsf password: fsdaf
+2019/12/02 22:54:50.585 [I] [users.go:104]  匹配数据结果： false
+2019/12/02 22:54:50.654 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 22:58:41.914 [I] [users.go:98]  userName: fdsf password: fsdaf
+2019/12/02 22:58:41.956 [I] [users.go:110]  搜查数据库结果: &{0xc000138480 <nil>}
+2019/12/02 22:58:41.956 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:22:11.719 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:25:06.410 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:26:36.403 [I] [users.go:117]  row &{0xc0000aefc0 <nil>}
+2019/12/02 23:26:36.404 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:27:16.723 [I] [users.go:117]  row &{0xc0001246c0 <nil>}
+2019/12/02 23:27:16.724 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:27:55.379 [I] [users.go:117]  row &{0xc0001247e0 <nil>}
+2019/12/02 23:27:55.380 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:28:08.803 [I] [users.go:117]  row &{0xc00009ea20 <nil>}
+2019/12/02 23:28:08.806 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:31:30.251 [I] [users.go:117]  row &{0xc00013e480 <nil>}
+2019/12/02 23:31:30.252 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:33:19.929 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:33:19.940 [I] [users.go:117]  row &{0xc00009ad80 <nil>}
+2019/12/02 23:33:19.942 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:34:49.803 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:34:51.587 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:34:53.645 [I] [users.go:117]  row &{0xc00009eb40 <nil>}
+2019/12/02 23:34:53.650 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:35:05.632 [I] [users.go:117]  row &{0xc000126120 <nil>}
+2019/12/02 23:35:05.633 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:36:25.358 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:36:25.393 [I] [users.go:117]  row &{0xc0001747e0 <nil>}
+2019/12/02 23:36:25.395 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:37:36.271 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:37:53.932 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:08.674 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:09.325 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:09.782 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:09.947 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:10.033 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:10.095 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:10.248 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:10.386 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:10.660 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:10.930 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:11.075 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:11.261 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:11.414 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:11.555 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:11.700 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:11.870 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:11.981 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:56.453 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:38:56.580 [I] [users.go:117]  row &{0xc000152360 <nil>}
+2019/12/02 23:38:56.583 [E] [common.go:199]  runtime error: invalid memory address or nil pointer dereference
+2019/12/02 23:39:59.686 [I] [users.go:117]  row &{0xc000182480 <nil>}
+2019/12/02 23:40:50.518 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:40:50.606 [I] [users.go:117]  row &{0xc000144480 <nil>}
+2019/12/02 23:41:40.779 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:41:40.795 [I] [users.go:117]  row &{0xc00013e480 <nil>}
+2019/12/02 23:44:45.661 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:44:45.683 [I] [users.go:118]  row &{0xc000140360 <nil>}
+2019/12/02 23:44:45.694 [I] [users.go:124]  UserName=  
+2019/12/02 23:44:45.696 [E] [users.go:126]  pq: column "uername" does not exist
+2019/12/02 23:44:45.710 [I] [handfunc.go:62]  user= &{    }
+2019/12/02 23:44:45.712 [I] [handfunc.go:63]  err: pq: column "uername" does not exist
+2019/12/02 23:44:45.713 [E] [handfunc.go:65]  pq: column "uername" does not exist
+2019/12/02 23:46:57.605 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:46:57.637 [I] [users.go:118]  row &{<nil> 0xc000182080}
+2019/12/02 23:46:57.642 [I] [users.go:124]  UserName= admin admin
+2019/12/02 23:46:57.644 [I] [handfunc.go:62]  user= &{admin admin 15920172041 超级管理员 admin}
+2019/12/02 23:46:57.646 [I] [handfunc.go:63]  err: <nil>
+2019/12/02 23:46:57.671 [E] [handfunc.go:83]  search permission return nil
+2019/12/02 23:49:08.366 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:49:08.401 [I] [users.go:118]  row &{<nil> 0xc0001ca080}
+2019/12/02 23:49:08.402 [I] [users.go:124]  UserName=  
+2019/12/02 23:49:08.403 [E] [users.go:126]  sql: no rows in result set
+2019/12/02 23:49:08.405 [I] [handfunc.go:62]  user= &{    }
+2019/12/02 23:49:08.406 [I] [handfunc.go:63]  err: sql: no rows in result set
+2019/12/02 23:49:08.407 [E] [handfunc.go:65]  sql: no rows in result set
+2019/12/02 23:49:15.108 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:49:15.132 [I] [users.go:118]  row &{<nil> 0xc0001ca180}
+2019/12/02 23:49:15.138 [I] [users.go:124]  UserName=  
+2019/12/02 23:49:15.139 [E] [users.go:126]  sql: no rows in result set
+2019/12/02 23:49:15.140 [I] [handfunc.go:62]  user= &{    }
+2019/12/02 23:49:15.141 [I] [handfunc.go:63]  err: sql: no rows in result set
+2019/12/02 23:49:15.142 [E] [handfunc.go:65]  sql: no rows in result set
+2019/12/02 23:55:31.011 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:55:31.042 [I] [users.go:118]  row &{<nil> 0xc000182280}
+2019/12/02 23:55:31.089 [I] [users.go:124]  UserName=  
+2019/12/02 23:55:31.098 [E] [users.go:126]  sql: no rows in result set
+2019/12/02 23:55:31.159 [I] [handfunc.go:62]  user= &{    }
+2019/12/02 23:55:31.162 [I] [handfunc.go:63]  err: sql: no rows in result set
+2019/12/02 23:55:31.194 [E] [handfunc.go:65]  sql: no rows in result set
+2019/12/02 23:55:41.780 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:55:41.806 [I] [users.go:118]  row &{<nil> 0xc0000c6180}
+2019/12/02 23:55:41.809 [I] [users.go:124]  UserName=  
+2019/12/02 23:55:41.812 [I] [users.go:126]  用户不存在
+2019/12/02 23:55:41.813 [I] [handfunc.go:62]  user= &{    }
+2019/12/02 23:56:36.333 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:56:36.365 [I] [users.go:118]  row &{<nil> 0xc00014e080}
+2019/12/02 23:56:36.397 [I] [users.go:124]  UserName=  
+2019/12/02 23:56:36.402 [I] [users.go:126]  用户不存在
+2019/12/02 23:56:36.405 [I] [handfunc.go:62]  user= &{    }
+2019/12/02 23:56:36.407 [I] [handfunc.go:63]  ok false
+2019/12/02 23:57:19.369 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:57:19.395 [I] [users.go:118]  row &{<nil> 0xc0000c6300}
+2019/12/02 23:57:19.424 [I] [users.go:124]  UserName=  
+2019/12/02 23:57:19.425 [I] [users.go:126]  用户不存在
+2019/12/02 23:57:19.471 [I] [handfunc.go:62]  user= &{    }
+2019/12/02 23:57:19.486 [I] [handfunc.go:63]  ok false
+2019/12/02 23:57:25.239 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:57:25.271 [I] [users.go:118]  row &{<nil> 0xc0000c6400}
+2019/12/02 23:57:25.273 [I] [users.go:124]  UserName=  
+2019/12/02 23:57:25.274 [I] [users.go:126]  用户不存在
+2019/12/02 23:57:25.275 [I] [handfunc.go:62]  user= &{    }
+2019/12/02 23:57:25.289 [I] [handfunc.go:63]  ok false
+2019/12/02 23:57:48.844 [I] [common.go:209]  RequestURI /login
+2019/12/02 23:57:48.849 [I] [handfunc.go:60]  能够运行到这里
+2019/12/02 23:57:48.885 [I] [users.go:118]  row &{<nil> 0xc00014e080}
+2019/12/02 23:57:48.910 [I] [users.go:124]  UserName=  
+2019/12/02 23:57:48.912 [I] [users.go:126]  用户不存在
+2019/12/02 23:57:48.914 [I] [handfunc.go:62]  user= &{    }
+2019/12/02 23:57:48.917 [I] [handfunc.go:63]  ok false

@@ -1,6 +1,6 @@
 <h2 class="logo">商品管理系统</h2>
 <ul nz-menu nzMode="horizontal" nzTheme="dark">
-        <li nz-submenu nzTitle="基础功能" nzIcon="appstore">
+        <li *ngIf="userModel.role=='超级管理员'" nz-submenu nzTitle="基础功能" nzIcon="appstore">
             <ul>
                 <li nz-menu-item style="text-align: center;">日志管理</li>
                 <li nz-menu-item style="text-align: center;" routerLink="/users">用户管理</li>
@@ -8,12 +8,16 @@
         </li>
         <li nz-submenu nzTitle="商品管理" nzIcon="setting" routerLink="/goods"> 
           <ul>
-            <li nz-menu-item style="text-align: center;">商品出货管理</li>
-            <li nz-menu-item style="text-align: center;">商品进货管理</li>
+            <li nz-menu-item *ngIf="userModel.role=='超级管理员'||userModel.role=='管理员'" style="text-align: center;">商品出货管理</li>
+            <li nz-menu-item *ngIf="userModel.role=='超级管理员'||userModel.role=='管理员'" style="text-align: center;">商品进货管理</li>
           </ul>
         </li>
-        <li nz-menu-item routerLink="/amount">
+        <li nz-menu-item routerLink="/amount" *ngIf="userModel.role=='超级管理员'">
             <i nz-icon nzType="bar-chart" ></i>
             月结统计
+        </li>
+        <li style="float: right;display: inline-block;">
+          欢迎你~{{userModel.userName}}
+          <a (click)="logout()" style="display: inline-block;margin-left: 5px;">注销</a>
         </li>
 </ul>

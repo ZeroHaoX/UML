@@ -187,7 +187,7 @@ func RegisteHand(w http.ResponseWriter,r *http.Request){
 		return
 	}
 	logs.Debug(user)
-	u,err:=models.SearchUserByName(user.Name)
+	u,err:=models.SearchUserByUserName(user.Name)
 	logs.Debug(u)
 	if err!=nil{
 		logs.Error(err)
@@ -243,7 +243,7 @@ func ExportHand(w http.ResponseWriter,r *http.Request){
 		return
 	}
 	var exportRecord models.ExportRecord
-	exportRecord.ID,ok=data["id"].(string)
+	exportRecord.ID,ok=data["eid"].(string)
 	if !ok{
 		err=fmt.Errorf("get export id error")
 		logs.Error(err)
@@ -269,6 +269,7 @@ func ExportHand(w http.ResponseWriter,r *http.Request){
 	// 	ErrorResponse(w,r,err,500)
 	// 	return
 	// }
+	logs.Debug(data)
 	exportRecord.GoodName,ok=data["gname"].(string)
 	if !ok{
 		err=fmt.Errorf("ExportHand get gname error")
@@ -282,20 +283,47 @@ func ExportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	exportRecord.Count,ok=data["count"].(int)
+	exportRecord.ImDate,ok=data["imdate"].(string)
+	if !ok{
+		err=fmt.Errorf("ExportHand get ImDate error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if exportRecord.ImDate==""||common.HasSpecialCharacter(exportRecord.ImDate){
+		err=fmt.Errorf("ExportHand get ImDate=%v",exportRecord.ImDate)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	exportRecord.Shipper,ok=data["shipper"].(string)
+	if !ok{
+		err=fmt.Errorf("ExportHand get Shipper error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if exportRecord.Shipper==""||common.HasSpecialCharacter(exportRecord.Shipper){
+		err=fmt.Errorf("ExportHand get Shipper=%v",exportRecord.Shipper)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	count,ok:=data["ecount"].(float64)
 	if !ok{
 		err=fmt.Errorf("ExportHand get count error")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	if exportRecord.Count<0{
+	if count<0{
 		err=fmt.Errorf("ExportHand get count<0")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	exportRecord.Price,ok=data["price"].(float32)
+	exportRecord.Count=int(count)
+	exportRecord.Price,ok=data["eprice"].(float64)
 	if !ok{
 		err=fmt.Errorf("ExportHand get price error")
 		logs.Error(err)
@@ -308,7 +336,7 @@ func ExportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	exportRecord.TotalPrice,ok=data["totalprice"].(float32)
+	exportRecord.TotalPrice,ok=data["etotalprice"].(float64)
 	if !ok{
 		err=fmt.Errorf("ExportHand get totalprice error")
 		logs.Error(err)
@@ -334,7 +362,7 @@ func ExportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	exportRecord.Phone,ok=data["phone"].(string)
+	exportRecord.Phone,ok=data["bphone"].(string)
 	if !ok{
 		err=fmt.Errorf("ExportHand get phone error")
 		logs.Error(err)
@@ -354,16 +382,19 @@ func ExportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	if common.HasSpecialCharacter(exportRecord.Detial){
-		err=fmt.Errorf("ExportHand get detial error:detial=%v",exportRecord.Detial)
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
+	if exportRecord.Detial==""{
+		exportRecord.Detial="无"
 	}
+	// if common.HasSpecialCharacter(exportRecord.Detial){
+	// 	err=fmt.Errorf("ExportHand get detial error:detial=%v",exportRecord.Detial)
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
 	err=models.Exoprt(&exportRecord)
 	if err!=nil{
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
+		logs.Error("单号重复！")
+		ErrorResponse(w,r,errors.New("单号重复！"),200)
 		return
 	}
 	SuccessResponse(w,r,nil,"出货成功！",0)
@@ -510,6 +541,9 @@ func ImportHand(w http.ResponseWriter,r *http.Request){
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
+	}
+	if importRecord.Detial==""{
+		importRecord.Detial="无"
 	}
 
 	record,err:=models.SearchImports(importRecord.ID)
@@ -1036,6 +1070,7 @@ func MonthlyHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
+	
 
 	exportList,err:=models.SearchExportListByTime(year,month)
 	if err!=nil{
@@ -1047,8 +1082,12 @@ func MonthlyHand(w http.ResponseWriter,r *http.Request){
 	respData["account"]=account
 	respData["imrecord"]=importList
 	respData["erecord"]=exportList
+	// length:=1
+	// if(len(importList)==0&&len(exportList)==0){
+	// 	length=0
+	// }
 
-	SuccessResponse(w,r,respData,"查询成功！",1)
+	SuccessResponse(w,r,respData,"查询成功！",len(importList)+len(exportList))
 }
 
 //删除商品信息
@@ -1196,6 +1235,50 @@ func DelUserHand(w http.ResponseWriter,r *http.Request){
 	SuccessResponse(w,r,nil,"删除成功！",0)
 }
 
+//查找用户信息
+func SearchUsersHand(w http.ResponseWriter,r *http.Request){
+	role,ok:=r.Context().Value("role").(string)
+	if !ok{
+		err:=fmt.Errorf("SearchUsersHand get role form context error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if role==""{
+		err:=fmt.Errorf("SearchUsersHand can't get role form context")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	ok,err:=models.CheckPermission(role,"用户信息查询")
+	if err!=nil{
+		err=fmt.Errorf("SearchUsersHand check permission error:%v",err)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if !ok{
+		ErrorResponse(w,r,errors.New("权限不足！"),403)
+		return
+	}
+	values:=r.URL.Query()
+	filter:=values.Get("filter")
+	if filter==""{
+		err:=fmt.Errorf("拿取filter参数为空")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	userList,err:=models.SearchUserByName(filter)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	// logs.Debug(userList)
+	SuccessResponse(w,r,userList,"查询成功！",len(userList))
+}
+
 //查找商品信息
 func SearchGoodsHand(w http.ResponseWriter,r *http.Request){
 	role,ok:=r.Context().Value("role").(string)
@@ -1224,13 +1307,6 @@ func SearchGoodsHand(w http.ResponseWriter,r *http.Request){
 	}
 	values:=r.URL.Query()
 	filter:=values.Get("filter")
-	// logs.Debug(filter)
-	// if !ok{
-	// 	err:=fmt.Errorf("拿取filter参数出错")
-	// 	logs.Error(err)
-	// 	ErrorResponse(w,r,err,500)
-	// 	return
-	// }
 	if filter==""{
 		err:=fmt.Errorf("拿取filter参数为空")
 		logs.Error(err)
@@ -1245,7 +1321,6 @@ func SearchGoodsHand(w http.ResponseWriter,r *http.Request){
 	}
 	logs.Debug(goodList)
 	SuccessResponse(w,r,goodList,"查询成功！",len(goodList))
-
 }
 
 //查找出货信息

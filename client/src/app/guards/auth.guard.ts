@@ -16,11 +16,11 @@ export class AuthGuard implements CanActivate {
     let path='/'+next.routeConfig.path //要跳转的路由
     // console.log(path)
     /*是否登录*/
-    // if(!this.checkLogin()){
-    //   this.router.navigate(['login'])
-    //   console.log("跳转登录")
-    //   return false
-    // }
+    if(!this.checkLogin()){
+      this.router.navigate(['login'])
+      console.log("跳转登录")
+      return false
+    }
     // /*查找是否有权限 */
     // if(!this.checkAuth(path)){
     //   this.router.navigate(['goods'])
@@ -42,21 +42,23 @@ export class AuthGuard implements CanActivate {
   }
 
   checkLogin():boolean{
-    // let token=localStorage.getItem("token")
-    // if(token==""||token==null||token==undefined){
-    //   return false
-    // }
+    let userName=localStorage.getItem("userName")
+    if(userName==""||userName==null||userName==undefined){
+      return false
+    }
     //用户model为空，即刷新了，重新用token获取用户信息
     if(User.role==""||User.role==null||User.role==undefined){
       //请求获取信息
-      this.userService.GetUserMes().subscribe(
-        (respone)=>{
-          User.userName=respone.data.username
-          User.role=respone.data.role
-          User.permissions=respone.data.permissions
-          // User.Password=respone.data.Password
-        }
-      )
+      // this.userService.GetUserMes().subscribe(
+      //   (respone)=>{
+      //     User.userName=respone.data.username
+      //     User.role=respone.data.role
+      //     User.permissions=respone.data.permissions
+      //     // User.Password=respone.data.Password
+      //   }
+      // )
+      User.userName=localStorage.getItem("userName")
+      User.role=localStorage.getItem("role")
     }
     return true
   }

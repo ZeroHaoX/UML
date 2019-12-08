@@ -99,6 +99,19 @@ export class GoodService {
     )
   }
 
+    //出货
+    Export(exportRecord:ExportRe):Observable<ReplyProto>{
+      if(exportRecord==null||typeof exportRecord=='undefined'||exportRecord.eid==""){
+        console.error("exportRecord is null")
+        return of({status:-1,msg:"exportRecord is nil"})
+      }
+      let api='/api/export'
+      this.reqProto.data=exportRecord
+      return  this.http.post<ReplyProto>(api,this.reqProto,httpOptions).pipe(
+        catchError(err=>this.handleError(err))
+      )
+    }
+
   // 月结出货和出货记录
   ExportAndImportRecord(year:string,month:string):Observable<ReplyProto>{
     if(year==null||typeof year=='undefined'||year==""){

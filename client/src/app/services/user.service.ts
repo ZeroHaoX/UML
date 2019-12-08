@@ -96,6 +96,17 @@ export class UserService {
     )
   }
     
+  Query(filter:string):Observable<ReplyProto>{
+    if(filter==""||filter==null||filter==undefined){
+      console.error("filter is error:",filter)
+      return of({status:-1,msg:"filter is nil"})
+    }
+    let api="/api/users/query?filter="+filter
+
+    return this.http.get<ReplyProto>(api,{withCredentials:true}).pipe(
+      catchError(err=>this.handleError(err))
+    )
+  }
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {

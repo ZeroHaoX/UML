@@ -17,8 +17,8 @@ type ExportRecord struct{
 	Shipper string	`json:"shipper"`
 	GoodName string	`json:"gname"`
 	Count int		`json:"ecount"`
-	Price float32	`json:"eprice"`
-	TotalPrice float32	`json:"etotalprice"`
+	Price float64	`json:"eprice"`
+	TotalPrice float64	`json:"etotalprice"`
 	Buyer string	`json:"buyer"`
 	Phone string	`json:"bphone"`
 	Detial string	`json:"detial"`
@@ -72,12 +72,13 @@ func Exoprt(exportRecord *ExportRecord)(err error){
 		logs.Error(err)
 		return
 	}
-	stmt,err:=db.Prepare("Insert into export_records(eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)")
+	logs.Debug(exportRecord)
+	stmt,err:=db.Prepare("Insert into export_records(eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)")
 	if err!=nil{
 		logs.Error(err)
 		return
 	}
-	_,err=stmt.Exec(&exportRecord.ID,&exportRecord.ImDate,exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate)
+	_,err=stmt.Exec(exportRecord.ID,exportRecord.ImDate,exportRecord.GoodName,exportRecord.Shipper,exportRecord.Count,exportRecord.Price,exportRecord.TotalPrice,exportRecord.Buyer,exportRecord.Phone,exportRecord.Detial)
 	if err!=nil{
 		err=fmt.Errorf("Export stmt error:%v",err)
 		logs.Error(err)

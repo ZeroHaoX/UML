@@ -16,14 +16,6 @@ type User struct{
 	Phone string `json:"phone"`
 	Role string	`json:"role"`
 }
-// type User1 struct{
-// 	// Uno string `json:"uno"`
-// 	UserName string	`json:"userName"`
-// 	Name string `json:"name"`
-// 	Phone string `json:"phone"`
-// 	Role string	`json:"role"`
-// 	Password string	`json:"password"`
-// }
 
 type UserView struct{
 	User
@@ -31,7 +23,7 @@ type UserView struct{
 }
 
 //按名字搜索某用户
-func SearchUserByName(userName string)(user *User,err error){
+func SearchUserByUserName(userName string)(user *User,err error){
 	if userName==""||common.HasSpecialCharacter(userName){
 		err=fmt.Errorf("userName is error userName=%v",userName)
 		logs.Error(err)
@@ -52,6 +44,32 @@ func SearchUserByName(userName string)(user *User,err error){
 		}
 	}
 
+	return
+}
+
+
+func SearchUserByName(name string)(users []User,err error){
+	if name==""||common.HasSpecialCharacter(name){
+		err=fmt.Errorf("userName is error name=%v",name)
+		logs.Error(err)
+		return
+	}
+	// user=new(User)
+	rows,err:=db.Query("select name,username,phone,role,password from users where name=$1",name)
+	if err!=nil{
+		logs.Error(err)
+		return
+	}
+	for rows.Next(){
+		var user User
+		err=rows.Scan(&user.Name,&user.ActualName,user.Phone,&user.Role,&user.Password)
+		if err!=nil{
+			err=fmt.Errorf("scan user error:%v",err)
+			logs.Error(err)
+			return
+		}
+		users=append(users,user)
+	}
 	return
 }
 
@@ -107,7 +125,6 @@ func ShowUserList(page int,pageSize int,orderBy string)(users []User,err error){
 
 //检验信息
 func CheckUserMes(userName,password string)(user *User,ok bool,err error){
-	user = new(User)
 	if userName==""||common.HasSpecialCharacter(userName){
 		err=fmt.Errorf("username is error:userName=%v",userName)
 		logs.Error(err)

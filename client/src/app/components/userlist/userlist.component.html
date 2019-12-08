@@ -2,7 +2,7 @@
 <nz-header>
     <app-head></app-head>
 </nz-header>
-<nz-content style="margin: 50px;">
+<nz-content style="margin: 50px;height: 600px;">
 <nz-breadcrumb>
     <nz-breadcrumb-item>
       <a>首页</a>
@@ -15,10 +15,10 @@
 
 <div style="margin: 20px;width: 40%;">
     <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-            <input type="text" nz-input placeholder="请输入用户名"/>
+            <input type="text" nz-input placeholder="请输入姓名" [(ngModel)]="filter"/>
     </nz-input-group>
     <ng-template #suffixIconButton>
-            <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
+            <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search" (click)="search()"></i></button>
     </ng-template>
 </div>
 

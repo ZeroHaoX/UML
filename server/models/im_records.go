@@ -10,12 +10,12 @@ import (
 type ImportRecord struct{
 	ID string	`json:"id"`
 	Imdate string	`json:"imdate"`
-	GoodName string	`jsoimount"`
-	Price float32	`json:"imprice"`
+	GoodName string	`json:"gname"`
+	Price float64	`json:"imprice"`
 	Count int	`json:"imcount"`
-	TotalPrice float32	`json:"imtotalprice"`
+	TotalPrice float64	`json:"imtotalprice"`
 	Shipper string	`json:"shipper"`
-	Phone string	`json:"phone"`
+	SPhone string	`json:"sphone"`
 	Detial string	`json:"detial"`
 	// Profit float32	`json:"profit"`
 }
@@ -33,7 +33,7 @@ func ImportList(year int,month int,page int,pageSize int)(importList []*ImportRe
 	}
 	start:=strToTimeStr(year,month)
 	end:=strToTimeStr(year,month+1)
-	queryString:=fmt.Sprintf("select * from export_records(id,gname,imprice,imtotalprice,imcount,detial,shipper,phone,imdate) where edate>=%v::timestamp and edate<%v::timestamp limit %v offset %v",start,end,pageSize,page*pageSize)
+	queryString:=fmt.Sprintf("select id,gname,imprice,imtotalprice,imcount,detial,shipper,phone,imdate from export_records where imdate>=%v and imdate<%vlimit %v offset %v",start,end,pageSize,page*pageSize)
 	rows,err:=db.Query(queryString)
 	if err!=nil{
 		logs.Error(err)
@@ -41,7 +41,7 @@ func ImportList(year int,month int,page int,pageSize int)(importList []*ImportRe
 	}
 	for rows.Next(){
 		var importRecord ImportRecord
-		err=rows.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.Phone,&importRecord.Imdate)
+		err=rows.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.SPhone,&importRecord.Imdate)
 		if err!=nil{
 			logs.Error(err)
 			return
@@ -62,7 +62,7 @@ func Import(importRecord ImportRecord)(err error){
 		logs.Error(err)
 		return
 	}
-	_,err=stmt.Exec(importRecord.ID,importRecord.Imdate,importRecord.GoodName,importRecord.Price,importRecord.Count,importRecord.TotalPrice,importRecord.Shipper,importRecord.Phone,importRecord.Detial)
+	_,err=stmt.Exec(importRecord.ID,importRecord.Imdate,importRecord.GoodName,importRecord.Price,importRecord.Count,importRecord.TotalPrice,importRecord.Shipper,importRecord.SPhone,importRecord.Detial)
 	if err!=nil{
 		logs.Error(err)
 		return
@@ -81,7 +81,7 @@ func UpdateImport(importRecord ImportRecord)(err error){
 		logs.Error(err)
 		return
 	}
-	_,err=stmt.Exec(importRecord.Imdate,importRecord.GoodName,importRecord.Price,importRecord.Count,importRecord.TotalPrice,importRecord.Shipper,importRecord.Phone,importRecord.Detial,importRecord.ID)
+	_,err=stmt.Exec(importRecord.Imdate,importRecord.GoodName,importRecord.Price,importRecord.Count,importRecord.TotalPrice,importRecord.Shipper,importRecord.SPhone,importRecord.Detial,importRecord.ID)
 	if err!=nil{
 		logs.Error(err)
 		return
@@ -116,7 +116,7 @@ func SearchImports(id string)(importRecord *ImportRecord,err error){
 	}
 	row:=db.QueryRow(`Select * from import_records where id=$1`,id)
 	if row!=nil{
-		err=row.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.Phone,&importRecord.Imdate)
+		err=row.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.SPhone,&importRecord.Imdate)
 		if err!=nil{
 			logs.Error(err)
 			return

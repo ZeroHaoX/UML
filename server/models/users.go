@@ -10,7 +10,7 @@ import (
 
 type User struct{
 	// Uno string `json:"uno"`
-	Name string	`json:"name"`
+	Name string	`json:"username"`
 	Password string	`json:"password"`
 	ActualName string `json:"actualname"`
 	Phone string `json:"phone"`
@@ -19,7 +19,7 @@ type User struct{
 
 type UserView struct{
 	User
-	Permissions []Permission
+	Permissions []Permission	`json:"permissions"`
 }
 
 //按名字搜索某用户
@@ -30,17 +30,20 @@ func SearchUserByName(userName string)(user *User,err error){
 		return
 	}
 	user=new(User)
-	row:=db.QueryRow("select * from users where username=$1",userName)
-	if row==nil{
+	rows,err:=db.Query("select * from users where username=$1",userName)
+	if err!=nil{
+		logs.Error(err)
 		return
-	}else{
-		err=row.Scan(&user.Name,&user.ActualName,user.Phone,&user.Role)
+	}
+	for rows.Next(){
+		err=rows.Scan(&user.Name,&user.ActualName,user.Phone,&user.Role)
 		if err!=nil{
 			err=fmt.Errorf("scan user error:%v",err)
 			logs.Error(err)
 			return
 		}
 	}
+
 	return
 }
 
@@ -67,13 +70,13 @@ func SearchUserByName(userName string)(user *User,err error){
 // }
 
 //展示用户列表
-func ShowUserList(page int,pageSize int,orderBy string)(users []*User,err error){
+func ShowUserList(page int,pageSize int,orderBy string)(users []User,err error){
 	if page<0||pageSize<0||orderBy==""||common.HasSpecialCharacter(orderBy){
 		err=fmt.Errorf("query parameters has error:page=%v pageSize=%v orderby=%v",page,pageSize,orderBy)
 		logs.Error(err)
 		return
 	}
-	queryString:=fmt.Sprintf("Select * from users order by %v limit %v offset %v",orderBy,pageSize,page*pageSize)
+	queryString:=fmt.Sprintf("Select username,name,phone,role,password from users order by username %v limit %v offset %v",orderBy,pageSize,(page-1)*pageSize)
 	rows,err:=db.Query(queryString)
 	if err!=nil{
 		err=fmt.Errorf("query users error:%v",err)
@@ -82,13 +85,14 @@ func ShowUserList(page int,pageSize int,orderBy string)(users []*User,err error)
 	}
 	for rows.Next(){
 		var user User
-		err=rows.Scan(&user.Name,&user.ActualName,&user.Phone,&user.Role)
+		err=rows.Scan(&user.Name,&user.ActualName,&user.Phone,&user.Role,&user.Password)
 		if err!=nil{
 			err=fmt.Errorf("row scan error:%v",err)
 			logs.Error(err)
 			return
 		}
-		users=append(users,&user)
+		// logs.Debug(user)
+		users=append(users,user)
 	}
 	return
 }
@@ -105,11 +109,14 @@ func CheckUserMes(userName,password string)(user *User,ok bool,err error){
 		logs.Error(err)
 		return
 	}
-	row:=db.QueryRow("select * from users where uername=$1 and password=$2",userName,password)
-	if row==nil{
-		ok=false
-	}else{
-		err=row.Scan(&user.Name,&user.ActualName,&user.Phone,&user.Role)
+	user=new(User)
+	rows,err:=db.Query("select * from users where username=$1 and password=$2",userName,password)
+	if err!=nil{
+		logs.Error(err)
+		return
+	}
+	for rows.Next(){
+		err=rows.Scan(&user.Name,&user.ActualName,&user.Phone,&user.Role,&user.Password)
 		if err!=nil{
 			logs.Error(err)
 			return
@@ -126,12 +133,12 @@ func InsertUser(user *User)(err error){
 		logs.Error(err)
 		return
 	}
-	stmt,err:=db.Prepare("Insert into users values($1,$2,$3,$4,'普通用户')")
+	stmt,err:=db.Prepare("Insert into users(username,name,phone,password,role) values($1,$2,$3,$4,'普通用户')")
 	if err!=nil{
 		logs.Error(err)
 		return
 	}
-	_,err=stmt.Exec(user.Name,user.ActualName,user.Password,user.Phone)
+	_,err=stmt.Exec(user.Name,user.ActualName,user.Phone,user.Password)
 	if err!=nil{
 		logs.Error(err)
 		return
@@ -145,12 +152,12 @@ func UpdateUser(user *User)(err error){
 		logs.Error(err)
 		return
 	}
-	stmt,err:=db.Prepare("Update users set uname=$1,actualname=$2,password=$3,phone=$4,role=$5")
+	stmt,err:=db.Prepare("Update users set name=$1,password=$2,phone=$3 where username=$4")
 	if err!=nil{
 		logs.Error(err)
 		return
 	}
-	_,err=stmt.Exec(user.Name,user.ActualName,user.Password,user.Phone,user.Role)
+	_,err=stmt.Exec(user.ActualName,user.Password,user.Phone,user.Name)
 	if err!=nil{
 		logs.Error(err)
 		return
@@ -164,7 +171,7 @@ func DelUser(username string)(err error){
 		logs.Error(err)
 		return
 	}
-	stmt,err:=db.Prepare("Delete from users where username=$1")
+	stmt,err:=db.Prepare("Delete from users_message where username=$1")
 	if err!=nil{
 		logs.Error(err)
 		return
@@ -184,6 +191,7 @@ func SearchUser(username string)(uv *UserView,err error){
 		logs.Error(err)
 		return
 	}
+	uv=new(UserView)
 	rows,err:=db.Query("Select * from user_view where username=$1",username)
 	if err!=nil{
 		logs.Error(err)
@@ -222,7 +230,7 @@ func SearchUsers(actualName string,page int,pageSize int)(uv *UserView,err error
 		logs.Error(err)
 		return
 	}
-	rows,err:=db.Query("Select * from user_view where actualname=$1 limit $2 offset $3",actualName,pageSize,page*pageSize)
+	rows,err:=db.Query("Select * from user_view where name=$1 limit $2 offset $3",actualName,pageSize,page*pageSize)
 	if err!=nil{
 		logs.Error(err)
 		return
@@ -239,6 +247,22 @@ func SearchUsers(actualName string,page int,pageSize int)(uv *UserView,err error
 			return
 		}
 		uv.Permissions=append(uv.Permissions,permission)
+	}
+	return
+}
+
+func SearchUserNumber()(length int,err error){
+	rows,err:=db.Query("Select count(username) from users")
+	if err!=nil{
+		logs.Error(err)
+		return
+	}
+	for rows.Next(){
+		err=rows.Scan(&length)
+		if err!=nil{
+			logs.Error(err)
+			return
+		}
 	}
 	return
 }

@@ -46,8 +46,12 @@ func CheckPermission(role string,permission string)(ok bool,err error){
 		logs.Error(err)
 		return
 	}
-	row:=db.QueryRow("select * from role_permission where role=$1 and pname=$2",role,permission)
-	if row!=nil{
+	rows,err:=db.Query("select * from role_permissions where rname=$1 and pname=$2",role,permission)
+	if err!=nil{
+		logs.Error(err)
+		return
+	}
+	for rows.Next(){
 		ok=true
 	}
 	return

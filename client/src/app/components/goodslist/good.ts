@@ -1,9 +1,10 @@
 export class Good{
-    Gno:string
-    Gname:string
-    Shipper:string
-    Phone:string
-    Count:number
-    Price:number
-    Imprice:number
+    gno?:number
+    gname?:string
+    shipper?:string
+    sphone?:string
+    count?:number
+    price?:number
+    imprice?:number
+    imdate?:string
 }

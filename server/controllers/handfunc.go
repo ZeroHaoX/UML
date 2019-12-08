@@ -8,6 +8,7 @@ import (
 	"../models"
 	"fmt"
 	"errors"
+	// "strconv"
 )
 
 //登录
@@ -31,7 +32,7 @@ func LoginHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	username,ok:=data["username"].(string)
+	username,ok:=data["u"].(string)
 	if !ok{
 		err=fmt.Errorf("get username error")
 		logs.Error(err)
@@ -44,7 +45,7 @@ func LoginHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	password,ok:=data["password"].(string)
+	password,ok:=data["p"].(string)
 	if !ok{
 		err=fmt.Errorf("get password error")
 		logs.Error(err)
@@ -57,6 +58,8 @@ func LoginHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
+	// logs.Debug(username)
+	// logs.Debug(password)
 	user,ok,err:=models.CheckUserMes(username,password)
 	if err!=nil{
 		logs.Error(err)
@@ -181,15 +184,20 @@ func RegisteHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
+	logs.Debug(user)
 	u,err:=models.SearchUserByName(user.Name)
+	logs.Debug(u)
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	if u!=nil{
-		SuccessResponse(w,r,nil,"用户已存在!",0)
+	if u.Name!=""{
+		ErrorResponse(w,r,errors.New("用户已存在!"),200)
+		return
 	}
+	
+	logs.Debug("注册！")
 	err=models.InsertUser(&user)
 	if err!=nil{
 		logs.Error(err)
@@ -417,7 +425,7 @@ func ImportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	importRecord.Price,ok=data["price"].(float32)
+	importRecord.Price,ok=data["price"].(float64)
 	if !ok{
 		err=fmt.Errorf("ImportHand get import price error")
 		logs.Error(err)
@@ -430,20 +438,22 @@ func ImportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	importRecord.Count,ok=data["count"].(int)
+	count,ok:=data["count"].(float64)
 	if !ok{
 		err=fmt.Errorf("ImportHand get import count error")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	if importRecord.Count<0{
+	if count<0{
 		err=fmt.Errorf("ImportHand get import count<0")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	importRecord.TotalPrice,ok=data["totalprice"].(float32)
+	importRecord.Count=int(count)
+	totalPrice:=importRecord.Price*count
+	importRecord.TotalPrice,ok=data["totalprice"].(float64)
 	if !ok{
 		err=fmt.Errorf("ImportHand get import totalprice error")
 		logs.Error(err)
@@ -456,6 +466,9 @@ func ImportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
+	if totalPrice!=importRecord.TotalPrice{
+		logs.Debug("总价有变更")
+	}
 	importRecord.Shipper,ok=data["shipper"].(string)
 	if !ok{
 		err=fmt.Errorf("ImportHand get shipper error")
@@ -464,13 +477,64 @@ func ImportHand(w http.ResponseWriter,r *http.Request){
 		return
 	}
 	if importRecord.Shipper==""||common.HasSpecialCharacter(importRecord.Shipper){
-		// err=fmt.Errorf()
+		err=fmt.Errorf("get shipper is error:%v",importRecord.Shipper)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
 	}
+	importRecord.SPhone,ok=data["sphone"].(string)
+	if !ok{
+		err=fmt.Errorf("ImportHand get SPhone error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if importRecord.SPhone==""||common.HasSpecialCharacter(importRecord.SPhone){
+		err=fmt.Errorf("get SPhone is error:%v",importRecord.SPhone)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	importRecord.Detial,ok=data["detial"].(string)
+	if !ok{
+		err=fmt.Errorf("ImportHand get Detial error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if common.HasSpecialCharacter(importRecord.Detial){
+		err=fmt.Errorf("get Detial is error:%v",importRecord.Detial)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+
+	record,err:=models.SearchImports(importRecord.ID)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if record.ID!=""{
+		err=fmt.Errorf("出货单号已存在:%v",record.ID)
+		logs.Error(err)
+		ErrorResponse(w,r,err,200)
+		return
+	}
+	err=models.Import(importRecord)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+
+	SuccessResponse(w,r,nil,"进货成功！",0)
+
 }
 
 //商品列表
 func GoodsListHand(w http.ResponseWriter,r *http.Request){
-	ok,err:=CheckPermission(r,"商品管理")
+	ok,err:=CheckPermission(r,"商品信息管理")
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
@@ -486,20 +550,8 @@ func GoodsListHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	data,ok:=body["data"].(map[string]interface{})
-	if !ok{
-		err=fmt.Errorf("GoodsListHand get data error")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	if data==nil{
-		err=fmt.Errorf("GoodsListHand get data nil")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	orderBy,ok:=body["orderby"].(string)
+	logs.Debug("商品信息管理权限有无：",ok)
+	orderBy,ok:=body["orderBy"].(string)
 	if !ok{
 		err=fmt.Errorf("GoodsListHand get orderby error")
 		logs.Error(err)
@@ -512,7 +564,7 @@ func GoodsListHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	page,ok:=body["page"].(int)
+	page,ok:=body["page"].(float64)
 	if !ok{
 		err=fmt.Errorf("GoodsListHand get page error")
 		logs.Error(err)
@@ -525,7 +577,7 @@ func GoodsListHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	pageSize,ok:=body["pagesize"].(int)
+	pageSize,ok:=body["pageSize"].(float64)
 	if !ok{
 		err=fmt.Errorf("get pagesize error")
 		logs.Error(err)
@@ -538,22 +590,29 @@ func GoodsListHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	goodsList,err:=models.GoodsList(page,pageSize,orderBy)
+	goodsList,err:=models.GoodsList(int(page),int(pageSize),orderBy)
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	if goodsList==nil{
-		err=fmt.Errorf("GoodsListHand goodsList is nil")
+	length,err:=models.SearchnNumber()
+	if err!=nil{
 		logs.Error(err)
-		ErrorResponse(w,r,err,500)
 		return
 	}
-	SuccessResponse(w,r,goodsList,"查询成功！",pageSize)
+	// if goodsList==nil{
+		// err=fmt.Errorf("GoodsListHand goodsList is nil")
+		// logs.Error(err)
+		// ErrorResponse(w,r,err,500)
+		// return
+		
+	// }
+	// logs.Debug(length)
+	SuccessResponse(w,r,goodsList,"查询成功！",length)
 }
 
-//更新商品信息
+// 更新商品信息
 func UpdateGoodsMes(w http.ResponseWriter,r *http.Request){
 	role,ok:=r.Context().Value("role").(string)
 	if !ok{
@@ -568,7 +627,7 @@ func UpdateGoodsMes(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	ok,err:=models.CheckPermission(role,"商品信息管理")
+	ok,err:=models.CheckPermission(role,"商品信息修改")
 	if err!=nil{
 		err=fmt.Errorf("UpdateGoodsMes check permission error:%v",err)
 		logs.Error(err)
@@ -579,6 +638,7 @@ func UpdateGoodsMes(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,errors.New("权限不足！"),403)
 		return
 	}
+	logs.Debug("权限符合")
 	body,err:=ReadBodyData(r)
 	if err!=nil{
 		logs.Error(err)
@@ -599,28 +659,28 @@ func UpdateGoodsMes(w http.ResponseWriter,r *http.Request){
 		return
 	}
 	var good models.Good
-	good.ID,ok=data["gid"].(int)
-	if !ok{
-		err=fmt.Errorf("get gid error")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	if good.ID<0{
-		err=fmt.Errorf("get gid<0")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	good.Name,ok=data["gname"].(string)
+	// good.ID,ok=data["gid"].(int)
+	// if !ok{
+	// 	err=fmt.Errorf("get gid error")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	// if good.ID<0{
+	// 	err=fmt.Errorf("get gid<0")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	good.GName,ok=data["gname"].(string)
 	if !ok{
 		err=fmt.Errorf("get gname error")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	if good.Name==""||common.HasSpecialCharacter(good.Name){
-		err=fmt.Errorf("UpdateGoodsMes get gname=%v",good.Name)
+	if good.GName==""||common.HasSpecialCharacter(good.GName){
+		err=fmt.Errorf("UpdateGoodsMes get gname=%v",good.GName)
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
@@ -638,7 +698,7 @@ func UpdateGoodsMes(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	good.Count,ok=data["count"].(int)
+	good.Count,ok=data["count"].(float64)
 	if !ok{
 		err=fmt.Errorf("UpdateGoodsMes get count error")
 		logs.Error(err)
@@ -651,7 +711,7 @@ func UpdateGoodsMes(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	good.Price,ok=data["price"].(float32)
+	good.Price,ok=data["price"].(float64)
 	if !ok{
 		err=fmt.Errorf("UpdateGoodsMes get Price error")
 		logs.Error(err)
@@ -664,7 +724,7 @@ func UpdateGoodsMes(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	good.ImPrice,ok=data["imprice"].(float32)
+	good.ImPrice,ok=data["imprice"].(float64)
 	if !ok{
 		err=fmt.Errorf("UpdateGoodsMes get ImPrice error")
 		logs.Error(err)
@@ -677,17 +737,32 @@ func UpdateGoodsMes(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	err=models.UpdateGoodMes(&good)
-	if err!=nil{
+	good.Gno,ok=data["gno"].(float64)
+	if !ok{
+		err=fmt.Errorf("UpdateGoodsMes get gno error")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
+	if good.Gno<0{
+		err=fmt.Errorf("UpdateGoodsMes get gno<0")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	err=models.UpdateGoodMes(&good)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,errors.New("数据有误，修改失败！"),200)
+		return
+	}
+	
 	SuccessResponse(w,r,nil,"修改成功",0)
 }
 
 //用户列表
 func UsersListHand(w http.ResponseWriter,r *http.Request){
+	//权限验证
 	role,ok:=r.Context().Value("role").(string)
 	if !ok{
 		err:=fmt.Errorf("UserListHand get role form context error")
@@ -701,7 +776,7 @@ func UsersListHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	ok,err:=models.CheckPermission(role,"员工信息管理")
+	ok,err:=models.CheckPermission(role,"用户信息管理")
 	if err!=nil{
 		err=fmt.Errorf("UserListHand check permission error:%v",err)
 		logs.Error(err)
@@ -712,26 +787,28 @@ func UsersListHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,errors.New("权限不足！"),403)
 		return
 	}
+	//body数据读取
 	body,err:=ReadBodyData(r)
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	data,ok:=body["data"].(map[string]interface{})
-	if !ok{
-		err=fmt.Errorf("UserListHand get data error")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	if data==nil{
-		err=fmt.Errorf("UserListHand get data nil")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	orderBy,ok:=body["orderby"].(string)
+	//数据映射，利于防止DDOS攻击
+	// data,ok:=body["data"].(map[string]interface{})
+	// if !ok{
+	// 	err=fmt.Errorf("UserListHand get data error")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	// if data==nil{
+	// 	err=fmt.Errorf("UserListHand get data nil")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	orderBy,ok:=body["orderBy"].(string)
 	if !ok{
 		err=fmt.Errorf("UserListHand get orderby error")
 		logs.Error(err)
@@ -744,7 +821,7 @@ func UsersListHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	page,ok:=body["page"].(int)
+	page,ok:=body["page"].(float64)
 	if !ok{
 		err=fmt.Errorf("UserListHand get page error")
 		logs.Error(err)
@@ -757,7 +834,7 @@ func UsersListHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	pageSize,ok:=body["pagesize"].(int)
+	pageSize,ok:=body["pageSize"].(float64)
 	if !ok{
 		err=fmt.Errorf("UserListHand get pagesize error")
 		logs.Error(err)
@@ -770,13 +847,22 @@ func UsersListHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	users,err:=models.ShowUserList(page,pageSize,orderBy)
+	//交付db进行数据查询
+	users,err:=models.ShowUserList(int(page),int(pageSize),orderBy)
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	SuccessResponse(w,r,users,"查询成功！",pageSize)
+
+	length,err:=models.SearchUserNumber()
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	//成功响应
+	SuccessResponse(w,r,users,"查询成功！",length)
 }
 
 //更新用户信息
@@ -794,7 +880,7 @@ func UpdateUserHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	ok,err:=models.CheckPermission(role,"员工信息更改")
+	ok,err:=models.CheckPermission(role,"用户信息修改")
 	if err!=nil{
 		err=fmt.Errorf("UpdateUserHand check permission error:%v",err)
 		logs.Error(err)
@@ -874,7 +960,7 @@ func UpdateUserHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-
+	logs.Debug(user)
 	err=models.UpdateUser(&user)
 	if err!=nil{
 		logs.Error(err)
@@ -975,7 +1061,7 @@ func DelGoodHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	ok,err:=models.CheckPermission(role,"商品管理")
+	ok,err:=models.CheckPermission(role,"商品信息删除")
 	if err!=nil{
 		err=fmt.Errorf("DelGoodHand check permission error:%v",err)
 		logs.Error(err)
@@ -986,39 +1072,49 @@ func DelGoodHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,errors.New("权限不足！"),403)
 		return
 	}
-	body,err:=ReadBodyData(r)
-	if err!=nil{
+	// body,err:=ReadBodyData(r)
+	// if err!=nil{
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	// data,ok:=body["data"].(map[string]interface{})
+	// if !ok{
+	// 	err=fmt.Errorf("DelGoodHand get data error")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	// if data==nil{
+	// 	err=fmt.Errorf("DelGoodHand get data nil")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	data:=r.URL.Query()
+	gName:=data.Get("gname")
+	logs.Debug(data)
+	if gName==""||common.HasSpecialCharacter(gName){
+		err=fmt.Errorf("DelGoodHand get gName=%v",gName)
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	data,ok:=body["data"].(map[string]interface{})
-	if !ok{
-		err=fmt.Errorf("DelGoodHand get data error")
+	shipper:=data.Get("shipper")
+	if shipper==""||common.HasSpecialCharacter(shipper){
+		err=fmt.Errorf("DelGoodHand get shipper=%v",shipper)
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	if data==nil{
-		err=fmt.Errorf("DelGoodHand get data nil")
+	imDate:=data.Get("imdate")
+	if imDate==""||common.HasSpecialCharacter(imDate){
+		err=fmt.Errorf("DelGoodHand get imDate=%v",imDate)
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	gid,ok:=data["gid"].(string)
-	if !ok{
-		err=fmt.Errorf("DelGoodHand get gid error")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	if gid==""||common.HasSpecialCharacter(gid){
-		err=fmt.Errorf("DelGoodHand get gid=%v",gid)
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	err=models.DelGoodMes(gid)
+	err=models.DelGoodMes(gName,shipper,imDate)
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
@@ -1042,7 +1138,7 @@ func DelUserHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	ok,err:=models.CheckPermission(role,"员工信息管理")
+	ok,err:=models.CheckPermission(role,"用户信息删除")
 	if err!=nil{
 		err=fmt.Errorf("DelUserHand check permission error:%v",err)
 		logs.Error(err)
@@ -1053,32 +1149,33 @@ func DelUserHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,errors.New("权限不足！"),403)
 		return
 	}
-	body,err:=ReadBodyData(r)
-	if err!=nil{
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	data,ok:=body["data"].(map[string]interface{})
-	if !ok{
-		err=fmt.Errorf("DelUserHand get data error")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	if data==nil{
-		err=fmt.Errorf("DelUserHand get data nil")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	userName,ok:=data["username"].(string)
-	if !ok{
-		err=fmt.Errorf("DelUserHand get username error")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
+	// body,err:=ReadBodyData(r)
+	// if err!=nil{
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	// data,ok:=body["data"].(map[string]interface{})
+	// if !ok{
+	// 	err=fmt.Errorf("DelUserHand get data error")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	// if data==nil{
+	// 	err=fmt.Errorf("DelUserHand get data nil")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	data:=r.URL.Query()
+	userName:=data.Get("username")
+	// if !ok{
+	// 	err=fmt.Errorf("DelUserHand get username error")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
 	if userName==""||common.HasSpecialCharacter(userName){
 		err=fmt.Errorf("DelGoodHand get userName=%v",userName)
 		logs.Error(err)
@@ -1096,6 +1193,53 @@ func DelUserHand(w http.ResponseWriter,r *http.Request){
 
 //查找商品信息
 func SearchGoodsHand(w http.ResponseWriter,r *http.Request){
+	role,ok:=r.Context().Value("role").(string)
+	if !ok{
+		err:=fmt.Errorf("SearchGoodsHand get role form context error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if role==""{
+		err:=fmt.Errorf("SearchGoodsHand can't get role form context")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	ok,err:=models.CheckPermission(role,"商品信息查询")
+	if err!=nil{
+		err=fmt.Errorf("SearchGoodsHand check permission error:%v",err)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if !ok{
+		ErrorResponse(w,r,errors.New("权限不足！"),403)
+		return
+	}
+	values:=r.URL.Query()
+	filter:=values.Get("filter")
+	// logs.Debug(filter)
+	// if !ok{
+	// 	err:=fmt.Errorf("拿取filter参数出错")
+	// 	logs.Error(err)
+	// 	ErrorResponse(w,r,err,500)
+	// 	return
+	// }
+	if filter==""{
+		err:=fmt.Errorf("拿取filter参数为空")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	goodList,err:=models.SearchGood("gname",filter)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	logs.Debug(goodList)
+	SuccessResponse(w,r,goodList,"查询成功！",len(goodList))
 
 }
 

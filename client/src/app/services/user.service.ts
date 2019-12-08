@@ -23,6 +23,20 @@ export class UserService {
     pageSize: 0
   }
 
+  //注册
+  Registe(user:User):Observable<ReplyProto>{
+    if(user==null|| typeof user=='undefined'){
+      console.error("user is error")
+      return of({status:-1,msg:"注册的user为空！"})
+    }
+    let api="/api/registe"
+    this.reqProto.data=user
+    return this.http.post(api,this.reqProto,httpOptions).pipe(
+      catchError(err=>this.handleError(err))
+    )
+    
+  }
+
   //请求用户信息
   GetUserMes():Observable<ReplyProto>{
     let api="http://localhost/usermes"
@@ -33,6 +47,7 @@ export class UserService {
   
   //用户列表展示
   GetUserList(page:number,pageSize:number,orderBy:string):Observable<ReplyProto>{
+    console.log("传输")
     if(page<0||page==undefined||page==null){
       console.error("page is error:",page)
       return of({status:-1,msg:"数据page有误！"})
@@ -41,11 +56,11 @@ export class UserService {
       console.error("pageSize is error:",pageSize)
       return of({status:-1,msg:"数据pageSize有误！"})
     }
-    if(orderBy!='desc'&&orderBy!='esc'){
+    if(orderBy!='desc'&&orderBy!='asc'){
       console.error("orderBy is error")
       return of({status:-1,msg:"数据orderBy有误！"})
     }
-    let api='http://localhost:8080/userlist'
+    let api='/api/users'
     this.reqProto.page=page
     this.reqProto.pageSize=pageSize
     this.reqProto.orderBy=orderBy
@@ -60,7 +75,7 @@ export class UserService {
       console.error("传输的数据有错:",user)
       return of({status:-1,msg:"数据传输有误！"})
     }
-    let api='http://loaclhost:8080/updateuser'
+    let api='/api/users/update'
     this.reqProto.data=user
     return this.http.post<ReplyProto>(api,this.reqProto,httpOptions)
     .pipe(
@@ -74,7 +89,7 @@ export class UserService {
       console.error("传输的数据有错:",userName)
       return of({status:-1,msg:"数据传输有误！"})
     }
-    let api='http://localhost:8080/deluser?username='+userName
+    let api='/api/users/del?username='+userName
     // this.reqProto.data=userName
     return this.http.get<ReplyProto>(api,{withCredentials:true}).pipe(
       catchError(err=>this.handleError(err))
@@ -100,5 +115,5 @@ export class UserService {
 
 const httpOptions={headers:new HttpHeaders({
   'Content-Type':  'application/json',
-  'Authorization': localStorage.getItem('token')
+  // 'Authorization': localStorage.getItem('token')
 })}

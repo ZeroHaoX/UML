@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Good } from './good';
 import {GoodService} from '../../services/good.service'
+import { NzMessageService } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-goodslist',
@@ -10,81 +11,118 @@ import {GoodService} from '../../services/good.service'
 export class GoodslistComponent implements OnInit {
 
   page:number=1
+  pageIndex:number=1
+  getSize:number=50
   pageSize:number=10
-  orderBy:string="esc"
+  orderBy:string="asc"
   updateModel=false
-  selectedGood={
-    Gno:"",
-    Gname:"",
-    Shipper:"",
-    Phone:"",
-    Count:0,
-    Price:0,
-    Imprice:0
-  }
+  selectedGood:Good={}
   goods:Array<Good>
+  goodsList:Array<Good>
+  total:number=0
+  filter:string=""
 
-
-  constructor(private goodService:GoodService) { }
+  constructor(private goodService:GoodService,private nzMessageService: NzMessageService) { }
 
   ngOnInit() {
-    this.goodService.GoodList(this.page,this.pageSize,this.orderBy).subscribe(
+    this.goodService.GoodList(this.page,this.getSize,this.orderBy).subscribe(
       (response)=>{
         if(response.status==-1){
           console.error(`get goodlist error:${response.msg}`)
           return
         }
-        if(response.data==null||response.data==undefined){
-          console.error("goodlist data is null")
+        if(typeof response.data=='undefined'){
+          console.error("goodlist data is undefinded")
+          return
         }
-        this.goods=response.data
+        if(response.data===null){
+          this.goodsList=[]
+          // console.log("asdasdsadad")
+          return
+        }
+        // console.log(response.data)
+        this.goodsList=response.data
+        this.total=response.rowCount
+        // console.log(this.goods)
+        this.goods=this.goodsList.slice(0,this.pageSize)
       }
     )
   }
 
-  // goods:Good[]=[
-  //   {Gno:"WTZ-15681",Gname:"商品1",Shipper:"进货商1",Phone:"13576548452",Count:50,Price:15000,Imprice:1000},
-  //   {Gno:"WTZ-15682",Gname:"商品1",Shipper:"进货商1",Phone:"13576548452",Count:50,Price:15000,Imprice:1000},
-  //   {Gno:"WTZ-15683",Gname:"商品1",Shipper:"进货商1",Phone:"13576548452",Count:50,Price:15000,Imprice:1000},
-  //   {Gno:"WTZ-15684",Gname:"商品1",Shipper:"进货商1",Phone:"13576548452",Count:50,Price:15000,Imprice:1000},
-  //   {Gno:"WTZ-15685",Gname:"商品1",Shipper:"进货商1",Phone:"13576548452",Count:50,Price:15000,Imprice:1000},
-  //   {Gno:"WTZ-15686",Gname:"商品1",Shipper:"进货商1",Phone:"13576548452",Count:50,Price:15000,Imprice:1000},
-  //   {Gno:"WTZ-15687",Gname:"商品1",Shipper:"进货商1",Phone:"13576548452",Count:50,Price:15000,Imprice:1000},
-  //   {Gno:"WTZ-15688",Gname:"商品1",Shipper:"进货商1",Phone:"13576548452",Count:50,Price:15000,Imprice:1000},
-  //   {Gno:"WTZ-15689",Gname:"商品1",Shipper:"进货商1",Phone:"13576548452",Count:50,Price:15000,Imprice:1000},
-  // ]
-  
+  formatterDollar = (value: number) => `￥ ${value}`;
+  parserDollar = (value: string) => value.replace('￥ ', '');
+  formatterCount = (value: number) => `${value}  个`;
+  parserCount = (value: string) => value.replace('', '');
 
-  remove(good:Good){
-    // console.log(good)
-    this.goods=this.goods.filter((g)=>{
-      return g.Gno!=good.Gno
-    })
-  }
-
-  showUpdateModel(good){
-    this.selectedGood=good
+  showUpdateModel(good:Good){
+    this.selectedGood.imdate=good.imdate
+    this.selectedGood.gname=good.gname
+    this.selectedGood.shipper=good.shipper
+    this.selectedGood.count=good.count
+    this.selectedGood.sphone=good.sphone
+    this.selectedGood.price=good.price
+    this.selectedGood.imprice=good.imprice
+    this.selectedGood.gno=good.gno
     this.updateModel=true
-    console.log(this.selectedGood)
+    // console.log(this.selectedGood)
   }
 
   handleOk(): void {
     // console.log('Button ok clicked!');
+    console.log("修改:",this.selectedGood)
+    this.goodService.UpdateGood(this.selectedGood).subscribe(
+      (resp)=>{
+        if(resp.status==0){
+          confirm("修改成功！")
+          this.goodService.GoodList(this.page,this.getSize,this.orderBy).subscribe(
+            (response)=>{
+              if(response.status==-1){
+                console.error(`get goodlist error:${response.msg}`)
+                return
+              }
+              if(typeof response.data=='undefined'){
+                console.error("goodlist data is undefinded")
+                return
+              }
+              if(response.data===null){
+                this.goodsList=[]
+                // console.log("asdasdsadad")
+                return
+              }
+              // console.log(response.data)
+              this.goodsList=response.data
+              this.total=response.rowCount
+              // console.log(this.goods)
+              this.goods=this.goodsList.slice(0,this.pageSize)
+            })
+        }else{
+          confirm("数据修改有误,修改失败！")
+        }
+      }
+    )
     this.updateModel = false;
   }
 
   handleCancel(): void {
-    // console.log('Button cancel clicked!');
     this.updateModel = false;
-    
+  }
+
+  //换页
+  change(event){
+    // console.log(event)
+    this.pageIndex=event
+    this.goods=this.goodsList.slice((event-1)*this.pageSize,event*this.pageSize)
+    return
   }
 
 
-  search(filter:string):void{
-    if(filter==""||filter==undefined||filter==null){
+  //搜索 商品名
+  search():void{
+    if(this.filter==""||this.filter==undefined||this.filter==null){
+      console.log("搜索条件为空")
       return
     }
-    this.goodService.Query(filter).subscribe(
+    this.goodService.Query(this.filter).subscribe(
       (resp)=>{
         if(resp.status==-1){
           console.error(resp.msg)
@@ -94,9 +132,29 @@ export class GoodslistComponent implements OnInit {
           console.error("search get data null")
           return
         }
-        this.goods=resp.data
+        this.goodsList=resp.data
+        this.goods=this.goodsList.slice(0,10)
       }
     )
+  }
+
+  //确认删除
+  confirm(good:Good): void {
+    console.log(good)
+    this.goodService.DelGood(good.imdate,good.gname,good.shipper).subscribe(
+      (resp)=>{
+        if(resp.status==0){
+          this.nzMessageService.info('删除成功！');
+          this.goods=this.goods.filter((g)=>{
+            return (g!=good)
+          })
+        }
+        else{
+          this.nzMessageService.error('删除失败！');
+        }
+      }
+    )
+    
   }
 
 }

@@ -1,7 +1,7 @@
 export class User{
-    UserName:string
-    ActualName:string
-    Phone:string
-    Role:string
-    Password?:string
+    username?:string
+    actualname?:string
+    phone?:string
+    role?:string
+    password?:string
 }

@@ -13,6 +13,8 @@ import { HeadComponent } from './components/head/head.component';
 import { GoodslistComponent } from './components/goodslist/goodslist.component';
 import { UserlistComponent } from './components/userlist/userlist.component';
 import { LoginComponent } from './components/login/login.component';
+import { RegistComponent } from './components/regist/regist.component';
+import { ImportComponent } from './components/import/import.component';
 
 registerLocaleData(zh);
 
@@ -22,7 +24,9 @@ registerLocaleData(zh);
     HeadComponent,
     GoodslistComponent,
     UserlistComponent,
-    LoginComponent
+    LoginComponent,
+    RegistComponent,
+    ImportComponent
   ],
   imports: [
     BrowserModule,

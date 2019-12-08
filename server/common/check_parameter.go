@@ -10,7 +10,7 @@ import (
 
 //检验特殊字符
 func HasSpecialCharacter(s string)(isTrue bool){
-	isTrue,err:=regexp.MatchString(`\.|\=|\/|\~|\-|\\|\'|\"|\(|\)|\{|\}|\[|\]|\*|\+|\>|\<|\#`,s)
+	isTrue,err:=regexp.MatchString(`\.|\=|\/|\~|\\|\'|\"|\(|\)|\{|\}|\[|\]|\*|\+|\>|\<|\#`,s)
 	if err!=nil{
 		logs.Error(err)
 		return false

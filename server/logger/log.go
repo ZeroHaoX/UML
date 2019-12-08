@@ -38,11 +38,5 @@ func InitLogger() error {
 	}
 
 	
-
-	//err = logs.SetLogger(logs.AdapterEs, `{"dsn":"http://localhost:9200/","level":1}`)
-	//if err != nil {
-	//	log.Fatal("SetLogger failed, err:", err)
-	//	return err
-	//}
 	return nil
 }

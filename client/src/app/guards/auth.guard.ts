@@ -13,26 +13,28 @@ export class AuthGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    let path=next.routeConfig.path //要跳转的路由
-    
+    let path='/'+next.routeConfig.path //要跳转的路由
+    // console.log(path)
     /*是否登录*/
-    if(!this.checkLogin()){
-      this.router.navigate(['login'])
-      return false
-    }
-    /*查找是否有权限 */
-    if(!this.checkAuth(path)){
-      this.router.navigate(['noauth'])
-      return false
-    }
+    // if(!this.checkLogin()){
+    //   this.router.navigate(['login'])
+    //   console.log("跳转登录")
+    //   return false
+    // }
+    // /*查找是否有权限 */
+    // if(!this.checkAuth(path)){
+    //   this.router.navigate(['goods'])
+    //   return false
+    // }
 
     return true;
   }
 
 
   checkAuth(path:string):boolean{
-    for(var p of User.Permissions){
-      if(p.API==path){
+    for(var p of User.permissions){
+      // console.log(p.api)
+      if(p.api==path){
         return true
       }
     }
@@ -40,18 +42,18 @@ export class AuthGuard implements CanActivate {
   }
 
   checkLogin():boolean{
-    let token=localStorage.getItem("token")
-    if(token==""||token==null||token==undefined){
-      return false
-    }
+    // let token=localStorage.getItem("token")
+    // if(token==""||token==null||token==undefined){
+    //   return false
+    // }
     //用户model为空，即刷新了，重新用token获取用户信息
-    if(User.Role==""||User.Role==null||User.Role==undefined){
+    if(User.role==""||User.role==null||User.role==undefined){
       //请求获取信息
       this.userService.GetUserMes().subscribe(
         (respone)=>{
-          User.UserName=respone.data.Username
-          User.Role=respone.data.Role
-          User.Permissions=respone.data.Permissions
+          User.userName=respone.data.username
+          User.role=respone.data.role
+          User.permissions=respone.data.permissions
           // User.Password=respone.data.Password
         }
       )

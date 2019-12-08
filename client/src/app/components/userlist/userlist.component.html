@@ -1,3 +1,8 @@
+<nz-layout>
+<nz-header>
+    <app-head></app-head>
+</nz-header>
+<nz-content style="margin: 50px;">
 <nz-breadcrumb>
     <nz-breadcrumb-item>
       <a>首页</a>
@@ -30,21 +35,34 @@
         </thead>
         <tbody>
             <tr *ngFor="let user of users let i=index" style="background: white;">
-                <td nzAlign='center'>{{ user.UserName }}</td>
-                <td nzAlign='center'>{{ user.ActualName }}</td>
-                <td nzAlign='center'>{{ user.Phone }}</td>
-                <td nzAlign='center'>{{ user.Role }}</td>
+                <td nzAlign='center'>{{ user.username }}</td>
+                <td nzAlign='center'>{{ user.actualname }}</td>
+                <td nzAlign='center'>{{ user.phone }}</td>
+                <td nzAlign='center'>{{ user.role }}</td>
                 <td nzAlign='center'>
-                    <a (click)="showUpdateModel(user)">修改</a>
-                    <nz-divider nzType="vertical"></nz-divider>
-                    <a style="color: orange;" (click)="remove(user)">删除</a>
+                    <a *ngIf="user.role!='超级管理员'" (click)="showUpdateModel(user)">修改</a>
+                    <nz-divider nzType="vertical" *ngIf="user.role!='超级管理员'"></nz-divider>
+                    <a style="color: orange;"
+                    nz-popconfirm
+                    nzPopconfirmTitle="确定要删除吗？"
+                    nzPopconfirmPlacement="bottom"
+                    (nzOnConfirm)="remove(user)"
+                    *ngIf="user.role!='超级管理员'"
+                    >删除</a>
                 </td>
             </tr>
         </tbody>
     </nz-table>
 </div>
 <nz-modal [(nzVisible)]="updateModel" nzTitle="信息修改" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
-        <span>用户名：</span><input nz-input placeholder="用户名" nzSize="large" style="margin-bottom: 10px;"  [(ngModel)]="selectedUser.UserName"/>
-        <span>姓名：</span><input nz-input placeholder="姓名" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.ActualName"/>
-        <span>联系方式：</span><input nz-input placeholder="联系方式" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.Phone"/>
+        <span>用户名：</span><input nz-input placeholder="用户名" nzSize="large" style="margin-bottom: 10px;" disabled='true' [(ngModel)]="selectedUser.username"/>
+        <span>姓名：</span><input nz-input placeholder="姓名" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.actualname"/>
+        <span>联系方式：</span><input nz-input placeholder="联系方式" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.phone"/>
+        <div style="margin-top: 5px;">角色：</div>
+        <nz-select [(ngModel)]="selectedUser.role" nzAllowClear nzPlaceHolder="Choose">
+            <nz-option nzValue="管理员" nzLabel="管理员"></nz-option>
+            <nz-option nzValue="普通用户" nzLabel="普通用户"></nz-option>
+        </nz-select>
 </nz-modal>
+</nz-content>
+</nz-layout>

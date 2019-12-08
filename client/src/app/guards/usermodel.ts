@@ -1,21 +1,21 @@
 export class UserModel{
-    UserName?:string
-    Role?:string
-    Password?:string
-    Permissions?:Permission[]
+    userName?:string
+    role?:string
+    // Password?:string
+    permissions?:Permission[]
 }
 
 export class Permission{
-    Name:string
-    API:string
+    name?:string
+    api?:string
 }
 
 
 let User:UserModel={
-    UserName:"",
-    Role:"",
-    Password:"",
-    Permissions:[]
+    userName:"",
+    role:"",
+    // Password:"",
+    permissions:[]
 }
 
 export default User

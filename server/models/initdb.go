@@ -19,7 +19,7 @@ var (
 )
 
 func InitDB()(err error){
-	config:=fmt.Sprintf("host=%v port=%v user=%v password=%v sslmodle=disable dbname=%v",host,port,user,password,dbname)
+	config:=fmt.Sprintf("host=%v port=%v user=%v password=%v sslmode=disable dbname=%v",host,port,user,password,dbname)
 	fmt.Println("config:",config)
 	db,err=sql.Open("postgres",config)
 	if err!=nil{

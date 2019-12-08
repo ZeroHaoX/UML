@@ -37,13 +37,6 @@ type ReqProto struct {
 	PageSize int         `json:"pageSize"` //分页大小
 }
 
-
-// type Context struct{
-// 	Url string
-// 	r *http.Request
-// 	w http.ResponseWriter
-// }
-
 //检查权限
 func CheckPermission(r *http.Request,permission string)(ok bool,err error){
 	role,ok:=r.Context().Value("role").(string)
@@ -91,10 +84,6 @@ func ReadBodyData(r *http.Request)(data map[string]interface{},err error){
 	return
 }
 
-func ReadUrl(){
-	
-}
-
 //token校验
 func CheckTokenPreHand(h http.HandlerFunc) http.HandlerFunc{
 	return func(w http.ResponseWriter,r *http.Request){
@@ -123,6 +112,7 @@ func CheckTokenPreHand(h http.HandlerFunc) http.HandlerFunc{
 			return
 		}
 		tokenString:=cookie.Value
+		// logs.Debug(tokenString)
 		if tokenString==""{
 			err=fmt.Errorf("parse tokenString=%v",tokenString)
 			logs.Error(err)
@@ -145,7 +135,7 @@ func CheckTokenPreHand(h http.HandlerFunc) http.HandlerFunc{
 			ErrorResponse(w,r,errors.New("权限不足！"),403)
 			return
 		}
-		logs.Debug("刷新token")
+		// logs.Debug("刷新token")
 		tokenString,isRefresh,err:=common.IsRefreshToken(token.Claims)
 		if err!=nil{
 			logs.Error(err)
@@ -158,7 +148,7 @@ func CheckTokenPreHand(h http.HandlerFunc) http.HandlerFunc{
 		http.SetCookie(w,cookie)
 		}
 
-		userName,ok:=token.Claims.(jwt.MapClaims)["uname"].(string)
+		userName,ok:=token.Claims.(jwt.MapClaims)["username"].(string)
 		if !ok{
 			err=fmt.Errorf("get user name from token error")
 			logs.Error(err)
@@ -206,14 +196,16 @@ func PreHand(h http.HandlerFunc) http.HandlerFunc{
 			ErrorResponse(w,r,err,403)
 			return
 		}
-		if r.RequestURI!="getmes"{
-			if r.Method!="POST"{
-				err:=fmt.Errorf("Method is error")
-				ErrorResponse(w,r,err,403)
-				return
-			}
-		}
-
+		// if r.RequestURI!="getmes"{
+		// 	if r.Method!="POST"{
+		// 		err:=fmt.Errorf("Method is error")
+		// 		ErrorResponse(w,r,err,403)
+		// 		return
+		// 	}
+		// }
+		w.Header().Set("Access-Control-Allow-Origin", "*") //允许访问所有域
+		w.Header().Add("Access-Control-Allow-Headers", "Content-Type") //header的类型
+		w.Header().Set("content-type", "application/json") //返回数据格式是json
 
 		// common.ParseToken()
 		h(w,r)
@@ -232,12 +224,12 @@ func ErrorResponse(w http.ResponseWriter,r *http.Request,err error,code int){
 		logs.Error(err)
 		http.Error(w,err.Error(),500)
 	}
-	if code!=500 && code!=403{
-		err=fmt.Errorf("ErrorResponse get code=%v",code)
-		logs.Error(err)
-		http.Error(w,err.Error(),500)
-		return
-	}
+	// if code!=500 && code!=403{
+	// 	err=fmt.Errorf("ErrorResponse get code=%v",code)
+	// 	logs.Error(err)
+	// 	http.Error(w,err.Error(),500)
+	// 	return
+	// }
 	resp := ReplyProto{}
 	resp.Status = -1
 	resp.Msg = err.Error()

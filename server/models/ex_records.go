@@ -22,7 +22,7 @@ type ExportRecord struct{
 	Buyer string	`json:"buyer"`
 	Phone string	`json:"bphone"`
 	Detial string	`json:"detial"`
-	// Profit float32	`json:"profit"`
+	Profit float64	`json:"profit"`
 }
 
 func nextMonth(year int,month int)(timeString string){
@@ -72,7 +72,7 @@ func Exoprt(exportRecord *ExportRecord)(err error){
 		logs.Error(err)
 		return
 	}
-	stmt,err:=db.Prepare("Insert into export_records values($1,$2,$3,$4,$5,$6,$7,$8,$9)")
+	stmt,err:=db.Prepare("Insert into export_records(eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate) values($1,$2,$3,$4,$5,$6,$7,$8,$9)")
 	if err!=nil{
 		logs.Error(err)
 		return
@@ -144,14 +144,14 @@ func SearchExportList(id string)(exportRecord *ExportRecord,err error){
 func SearchExportListByTime(year int,month int)(exportRecords []ExportRecord,err error){
 	nextDate:=nextMonth(year,month)
 	nowDate:=timeToString(year,month)
-	rows,err:=db.Query("Select eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate from import_records where imdate>=$1 and imdate<$2 order by eid asc",nowDate,nextDate)
+	rows,err:=db.Query("Select eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate,profit from import_records where imdate>=$1 and imdate<$2 order by eid asc",nowDate,nextDate)
 	if err!=nil{
 		logs.Error(err)
 		return
 	}
 	for rows.Next(){
 		var exportRecord ExportRecord
-		err=rows.Scan(&exportRecord.ID,&exportRecord.ImDate,exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate)
+		err=rows.Scan(&exportRecord.ID,&exportRecord.ImDate,exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate,&exportRecord.Profit)
 		if err!=nil{
 			logs.Error(err)
 			return

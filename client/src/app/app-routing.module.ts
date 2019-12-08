@@ -6,13 +6,17 @@ import { LoginComponent } from './components/login/login.component';
 import {AuthGuard} from './guards/auth.guard'
 import {RegistComponent} from './components/regist/regist.component'
 import { ImportComponent } from './components/import/import.component';
+import { AmountComponent } from './components/amount/amount.component';
 
 const routes: Routes = [
   {path:"login",component:LoginComponent},
-  {path:'users',canActivate:[AuthGuard],component:UserlistComponent},
-  {path:'goods',canActivate:[AuthGuard],component:GoodslistComponent},
+  // {path:'users',canActivate:[AuthGuard],component:UserlistComponent},
+  // {path:'goods',canActivate:[AuthGuard],component:GoodslistComponent},
+  {path:'users',component:UserlistComponent},
+  {path:'goods',component:GoodslistComponent},
   {path:'regist',component:RegistComponent},
   {path:'import',component:ImportComponent},
+  {path:'amount',component:AmountComponent},
   {path:'**',redirectTo:'login'}
 ];
 

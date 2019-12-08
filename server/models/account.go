@@ -24,8 +24,21 @@ func timeToString(year int ,month int)(timeString string){
 	return 
 }
 
+func getMonth(year int ,month int)(timeString string){
+	var m string
+	if month<10{
+		m="0"+strconv.Itoa(month)
+	}else{
+		m=strconv.Itoa(month)
+	}
+	y:=strconv.Itoa(year)
+	timeString= y+"-"+m
+	logs.Debug(timeString)
+	return 
+}
+
 func GetAccount(year int,month int)(account *Account,err error){
-	timeString:=timeToString(year,month)
+	timeString:=getMonth(year,month)
 	rows,err:=db.Query("Select profit,turnover from account_view where accountdate=$1",timeString)
 	if err!=nil{
 		logs.Error(err)

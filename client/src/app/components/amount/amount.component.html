@@ -8,7 +8,7 @@
                 <a>首页</a>
             </nz-breadcrumb-item>
             <nz-breadcrumb-item>
-                商品信息管理
+                月结统计
             </nz-breadcrumb-item>
         </nz-breadcrumb>
         <h1 style="margin-top: 20px;">月结统计</h1>
@@ -22,17 +22,17 @@
         <div>
             <div style="float: left; margin: 70px;">
                 <h1>本月利润</h1>
-                <h2>XXXXX</h2>
+                <h2>{{profit}}</h2>
             </div>
             <div style="float: right;margin: 70px;">
                 <h1>本月营业额</h1>
-                <h2>XXXXX</h2>
+                <h2>{{turnover}}</h2>
             </div>
         </div>
 
         <!-- 出货 -->
-        <div class="table">
-            <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="goods" nzShowPagination='false'>
+        <div class="table" style="margin: 20px;">
+            <nz-table nzBordered='true' [nzShowPagination]="true" [nzPageSize]=10 [nzData]="goods" nzShowPagination='false'>
                 <thead>
                     <tr>
                         <th nzAlign='center'>序号</th>
@@ -50,7 +50,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let exportRe of exportRes let i=index" style="background: white;">
+                    <tr *ngFor="let exportRe of displayExportRes let i=index" style="background: white;">
                         <td nzAlign='center'>{{i+1+(pageIndex-1)*pageSize}}</td>
                         <td nzAlign='center'>{{ exportRe.eid }}</td>
                         <td nzAlign='center'>{{ exportRe.eprice }}</td>
@@ -66,12 +66,11 @@
                     </tr>
                 </tbody>
             </nz-table>
-            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="total"
-                (nzPageIndexChange)="change($event)"></nz-pagination>
+            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="exportResTotal" (nzPageIndexChange)="change($event)"></nz-pagination>
         </div>
         <!-- 进货 -->
-        <div class="table">
-            <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="goods" nzShowPagination='false'>
+        <div class="table" style="margin: 20px;">
+            <nz-table nzBordered='true'  [nzPageSize]=10 [nzData]="goods" nzShowPagination='false'>
                 <thead>
                     <tr>
                         <th nzAlign='center'>序号</th>
@@ -87,9 +86,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let importRe of importRes let i=index" style="background: white;">
+                    <tr *ngFor="let importRe of displayImportRes let i=index" style="background: white;">
                         <td nzAlign='center'>{{i+1+(pageIndex-1)*pageSize}}</td>
-                        <td nzAlign='center'>{{ importRe.imid }}</td>
+                        <td nzAlign='center'>{{ importRe.id }}</td>
                         <td nzAlign='center'>{{ importRe.gname }}</td>
                         <td nzAlign='center'>{{ importRe.imprice }}</td>
                         <td nzAlign='center'>{{ importRe.imcount }}</td>
@@ -101,8 +100,7 @@
                     </tr>
                 </tbody>
             </nz-table>
-            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="total"
-                (nzPageIndexChange)="change($event)"></nz-pagination>
+            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="importResTotal" (nzPageIndexChange)="change($event)"></nz-pagination>
         </div>
     </nz-content>
 </nz-layout>

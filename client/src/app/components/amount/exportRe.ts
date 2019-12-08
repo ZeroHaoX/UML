@@ -16,7 +16,7 @@ export class ExportRe{
 
 // 进货
 export class ImportRe{
-    imid?:string
+    id?:string
     gname?:string
     imprice?:number
     imcount?:number

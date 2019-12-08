@@ -11,65 +11,80 @@
           商品信息管理
         </nz-breadcrumb-item>
     </nz-breadcrumb>
-    <h1 style="margin-top: 20px;">商品列表</h1>
+    <h1 style="margin-top: 20px;">商品管理界面</h1>
+    <nz-tabset>
+            <nz-tab nzTitle="商品列表">
+                    <div style="margin: 20px;width: 40%;">
+                            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                                    <input type="text" nz-input placeholder="请输入商品名" [(ngModel)]="filter"/>
+                            </nz-input-group>
+                            <ng-template #suffixIconButton>
+                                    <button nz-button nzType="primary" nzSearch (click)="search()"><i nz-icon nzType="search"></i></button>
+                            </ng-template>
+                        </div>
+                        
+                        <div class="table">
+                            <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="goods" nzShowPagination='false' >
+                                <thead>
+                                    <tr>
+                                        <th nzAlign='center'>序号</th>
+                                        <th nzAlign='center'>批次</th>
+                                        <th nzAlign='center'>商品名</th>
+                                        <th nzAlign='center'>进货商</th>
+                                        <th nzAlign='center'>联系方式</th>
+                                        <th nzAlign='center'>数量(个)</th>
+                                        <th nzAlign='center'>售价(个/元)</th>
+                                        <th nzAlign='center'>进价(个/元)</th>
+                                        <th nzAlign='center'>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let good of goods let i=index" style="background: white;">
+                                        <td nzAlign='center'>{{i+1+(pageIndex-1)*pageSize}}</td>
+                                        <td nzAlign='center'>{{ good.imdate }}</td>
+                                        <td nzAlign='center'>{{ good.gname }}</td>
+                                        <td nzAlign='center'>{{ good.shipper }}</td>
+                                        <td nzAlign='center'>{{ good.sphone }}</td>
+                                        <td nzAlign='center'>{{ good.count }}</td>
+                                        <td nzAlign='center'>{{ good.price }}</td>
+                                        <td nzAlign='center'>{{ good.imprice }}</td>
+                                        <td nzAlign='center'>
+                                            <a (click)="showUpdateModel(good)">修改</a>
+                                            <nz-divider nzType="vertical"></nz-divider>
+                                            <a style="color: orange;"
+                                            nz-popconfirm
+                                            nzPopconfirmTitle="确定要删除吗？"
+                                            nzPopconfirmPlacement="bottom"
+                                            (nzOnConfirm)="confirm(good)"
+                                            >删除</a>
+                                            <nz-divider nzType="vertical"></nz-divider>
+                                            <a style="color: green;"
+                                            (click)="export(good)"
+                                            >出货</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </nz-table>
+                            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="total" (nzPageIndexChange)="change($event)"></nz-pagination>
+                        </div>
+                        <nz-modal [(nzVisible)]="updateModel" nzTitle="信息修改" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+                            <span>商品名：</span><input nz-input placeholder="商品名" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedGood.gname"/>
+                            <span>进货商：</span><input nz-input placeholder="进货商" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedGood.shipper"/>
+                            <span>联系方式：</span><input nz-input placeholder="联系方式" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedGood.sphone"/>
+                            <span style="margin-top: 10px;margin-left: 5px;">数量：</span><nz-input-number [(ngModel)]="selectedGood.count" [nzMin]="1" [nzStep]="1" [nzFormatter]="formatterCount" [nzParser]="parserCount"></nz-input-number>
+                            <span style="margin-top: 10px;margin-left: 20px;">售价：</span><nz-input-number [(ngModel)]="selectedGood.price" [nzMin]="1" [nzStep]="100" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number>
+                            <span style="margin-top: 10px;margin-left: 20px;">进价：</span><nz-input-number [(ngModel)]="selectedGood.imprice" [nzMin]="1" [nzStep]="100" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number>
+                        </nz-modal>
+                        <nz-modal [(nzVisible)]="exportModel" nzTitle="出货单填写" (nzOnCancel)="handleCancel()" (nzOnOk)="exportOk()">
+                              
+                        </nz-modal>
+            </nz-tab>
+            <nz-tab nzTitle="进货">
+                <app-import></app-import>
+            </nz-tab>
+          </nz-tabset>
     
-    <div style="margin: 20px;width: 40%;">
-        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-                <input type="text" nz-input placeholder="请输入商品名" [(ngModel)]="filter"/>
-        </nz-input-group>
-        <ng-template #suffixIconButton>
-                <button nz-button nzType="primary" nzSearch (click)="search()"><i nz-icon nzType="search"></i></button>
-        </ng-template>
-    </div>
-    
-    <div class="table">
-        <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="goods" nzShowPagination='false' >
-            <thead>
-                <tr>
-                    <th nzAlign='center'>序号</th>
-                    <th nzAlign='center'>批次</th>
-                    <th nzAlign='center'>商品名</th>
-                    <th nzAlign='center'>进货商</th>
-                    <th nzAlign='center'>联系方式</th>
-                    <th nzAlign='center'>数量</th>
-                    <th nzAlign='center'>售价(元)</th>
-                    <th nzAlign='center'>进价(元)</th>
-                    <th nzAlign='center'>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let good of goods let i=index" style="background: white;">
-                    <td nzAlign='center'>{{i+1+(pageIndex-1)*pageSize}}</td>
-                    <td nzAlign='center'>{{ good.imdate }}</td>
-                    <td nzAlign='center'>{{ good.gname }}</td>
-                    <td nzAlign='center'>{{ good.shipper }}</td>
-                    <td nzAlign='center'>{{ good.sphone }}</td>
-                    <td nzAlign='center'>{{ good.count }}</td>
-                    <td nzAlign='center'>{{ good.price }}</td>
-                    <td nzAlign='center'>{{ good.imprice }}</td>
-                    <td nzAlign='center'>
-                        <a (click)="showUpdateModel(good)">修改</a>
-                        <nz-divider nzType="vertical"></nz-divider>
-                        <a style="color: orange;"
-                        nz-popconfirm
-                        nzPopconfirmTitle="确定要删除吗？"
-                        nzPopconfirmPlacement="bottom"
-                        (nzOnConfirm)="confirm(good)"
-                        >删除</a>
-                    </td>
-                </tr>
-            </tbody>
-        </nz-table>
-        <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="total" (nzPageIndexChange)="change($event)"></nz-pagination>
-    </div>
-    <nz-modal [(nzVisible)]="updateModel" nzTitle="信息修改" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
-        <span>商品名：</span><input nz-input placeholder="商品名" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedGood.gname"/>
-        <span>进货商：</span><input nz-input placeholder="进货商" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedGood.shipper"/>
-        <span>联系方式：</span><input nz-input placeholder="联系方式" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedGood.sphone"/>
-        <span style="margin-top: 10px;margin-left: 5px;">数量：</span><nz-input-number [(ngModel)]="selectedGood.count" [nzMin]="1" [nzStep]="1" [nzFormatter]="formatterCount" [nzParser]="parserCount"></nz-input-number>
-        <span style="margin-top: 10px;margin-left: 20px;">售价：</span><nz-input-number [(ngModel)]="selectedGood.price" [nzMin]="1" [nzStep]="100" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number>
-        <span style="margin-top: 10px;margin-left: 20px;">进价：</span><nz-input-number [(ngModel)]="selectedGood.imprice" [nzMin]="1" [nzStep]="100" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number>
-    </nz-modal>
+ 
   </nz-content>
   <!-- <nz-footer>Footer</nz-footer> -->
 </nz-layout>

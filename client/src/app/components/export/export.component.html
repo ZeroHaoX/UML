@@ -1,7 +1,7 @@
 <h2 style="margin-left: 200px;margin-bottom: 30px;">出货单据</h2>
         <form nz-form [formGroup]="importForm" (ngSubmit)="submitForm()">
                 <nz-form-item>
-                    <nz-form-label [nzSpan]="7" nzRequired>进货单号</nz-form-label>
+                    <nz-form-label [nzSpan]="7" nzRequired>出货单号</nz-form-label>
                     <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入正确的单号!">
                         <input nz-input formControlName="importID" placeholder="填写单号" type="text" />
                         <ng-template  let-control>
@@ -15,22 +15,12 @@
                     <nz-form-label [nzSpan]="7" nzRequired>商品名称</nz-form-label>
                     <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入正确的商品名称!">
                         <input nz-input formControlName="gname" placeholder="填写商品名称" type="text" />
-                        <ng-template  let-control>
-                            <ng-container *ngIf="control.hasError('required')">
-                                请输入正确的商品名称!
-                            </ng-container>
-                        </ng-template>
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
                     <nz-form-label [nzSpan]="7" nzRequired>进货商</nz-form-label>
                     <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入正确的进货商名称!">
                         <input nz-input formControlName="shipper" placeholder="填写进货商名称" type="text" />
-                        <ng-template  let-control>
-                            <ng-container *ngIf="control.hasError('required')">
-                                请输入正确的进货商名称!
-                            </ng-container>
-                        </ng-template>
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
@@ -71,7 +61,7 @@
                     </nz-form-item>
                 <nz-form-item>
                     <button nz-button [nzType]="'primary'" [disabled]="!importForm.valid" style="margin-left: 600px;width: 200px;height: 50px;">
-                        <span>进货单提交</span>
+                        <span>确定</span>
                     </button>
                 </nz-form-item>
         </form>

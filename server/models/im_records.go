@@ -31,9 +31,9 @@ func ImportList(year int,month int,page int,pageSize int)(importList []*ImportRe
 		logs.Error(err)
 		return
 	}
-	start:=strToTimeStr(year,month)
-	end:=strToTimeStr(year,month+1)
-	queryString:=fmt.Sprintf("select id,gname,imprice,imtotalprice,imcount,detial,shipper,phone,imdate from export_records where imdate>=%v and imdate<%vlimit %v offset %v",start,end,pageSize,page*pageSize)
+	start:=nextMonth(year,month)
+	end:=nextMonth(year,month+1)
+	queryString:=fmt.Sprintf("select id,gname,imprice,imtotalprice,imcount,detial,shipper,phone,imdate from export_records where imdate>=%v and imdate<%v",start,end,pageSize,page*pageSize)
 	rows,err:=db.Query(queryString)
 	if err!=nil{
 		logs.Error(err)
@@ -126,6 +126,26 @@ func SearchImports(id string)(importRecord *ImportRecord,err error){
 			logs.Error(err)
 			return
 		}
+	}
+	return
+}
+
+func SearchImportsByTime(year int,month int)(importRecords []ImportRecord,err error){
+	nextDate:=nextMonth(year,month)
+	nowDate:=timeToString(year,month)
+	rows,err:=db.Query("Select imid,gname,imprice,imtotalprice,imcount,detial,shipper,sphone,imdate from import_records where imdate>=$1 and imdate<$2",nowDate,nextDate)
+	if err!=nil{
+		logs.Error(err)
+		return
+	}
+	for rows.Next(){
+		var importRecord ImportRecord
+		err=rows.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.SPhone,&importRecord.Imdate)
+		if err!=nil{
+			logs.Error(err)
+			return
+		}
+		importRecords=append(importRecords,importRecord)
 	}
 	return
 }

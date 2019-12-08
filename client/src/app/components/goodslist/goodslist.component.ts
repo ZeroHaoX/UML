@@ -157,4 +157,8 @@ export class GoodslistComponent implements OnInit {
     
   }
 
+  export(){
+    
+  }
+
 }

@@ -12,26 +12,64 @@
             </nz-breadcrumb-item>
         </nz-breadcrumb>
         <h1 style="margin-top: 20px;">月结统计</h1>
-
-        <div>
-            <div style="float: left;">
-                <h3>出货记录</h3>
-            </div>
-            <div style="float: right;">
-                <nz-month-picker [nzRenderExtraFooter]="footerRender" nzPlaceHolder="Select month" ngModel
-                    (ngModelChange)="SearchExportRe($event)"></nz-month-picker>
-            </div>
-        </div>
-
+        <div style="clear: both;"></div>
         <div style="margin: 20PX;">
-            <div style="float: left;">
-                <h3>出货记录</h3>
-            </div>
-            <div style="float: right;">
+            <div>
                 <nz-month-picker [nzRenderExtraFooter]="footerRender" nzPlaceHolder="Select month" ngModel
                     (ngModelChange)="SearchExportRe($event)"></nz-month-picker>
             </div>
         </div>
+        <div>
+            <div style="float: left; margin: 70px;">
+                <h1>本月利润</h1>
+                <h2>XXXXX</h2>
+            </div>
+            <div style="float: right;margin: 70px;">
+                <h1>本月营业额</h1>
+                <h2>XXXXX</h2>
+            </div>
+        </div>
+
+        <div class="table">
+            <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="goods" nzShowPagination='false'>
+                <thead>
+                    <tr>
+                        <th nzAlign='center'>序号</th>
+                        <th nzAlign='center'>出货单号</th>
+                        <th nzAlign='center'>出货单价</th>
+                        <th nzAlign='center'>数量</th>
+                        <th nzAlign='center'>总价</th>
+                        <th nzAlign='center'>买家</th>
+                        <th nzAlign='center'>其他说明</th>
+                        <th nzAlign='center'>商品批次</th>
+                        <th nzAlign='center'>商品名称</th>
+                        <th nzAlign='center'>进货商</th>
+                        <th nzAlign='center'>联系方式</th>
+                        <th nzAlign='center'>日期</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let exportRe of exportRes let i=index" style="background: white;">
+                        <td nzAlign='center'>{{i+1+(pageIndex-1)*pageSize}}</td>
+                        <td nzAlign='center'>{{ exportRe.eid }}</td>
+                        <td nzAlign='center'>{{ exportRe.eprice }}</td>
+                        <td nzAlign='center'>{{ exportRe.ecount }}</td>
+                        <td nzAlign='center'>{{ exportRe.etotalprice }}</td>
+                        <td nzAlign='center'>{{ exportRe.buyer }}</td>
+                        <td nzAlign='center'>{{ exportRe.detial }}</td>
+                        <td nzAlign='center'>{{ exportRe.imdate }}</td>
+                        <td nzAlign='center'>{{ exportRe.gname }}</td>
+                        <td nzAlign='center'>{{ exportRe.shipper }}</td>
+                        <td nzAlign='center'>{{ exportRe.bphone }}</td>
+                        <td nzAlign='center'>{{ exportRe.edate }}</td>
+                    </tr>
+                </tbody>
+            </nz-table>
+            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="total"
+                (nzPageIndexChange)="change($event)"></nz-pagination>
+        </div>
+
+
         <div class="table">
             <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="goods" nzShowPagination='false'>
                 <thead>

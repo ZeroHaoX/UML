@@ -72,12 +72,12 @@ func Exoprt(exportRecord *ExportRecord)(err error){
 		logs.Error(err)
 		return
 	}
-	stmt,err:=db.Prepare("Insert into export_records(eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate) values($1,$2,$3,$4,$5,$6,$7,$8,$9)")
+	stmt,err:=db.Prepare("Insert into export_records(eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)")
 	if err!=nil{
 		logs.Error(err)
 		return
 	}
-	_,err=stmt.Exec(exportRecord.ID,exportRecord.ImDate,exportRecord.Count,exportRecord.Price,exportRecord.TotalPrice,exportRecord.Buyer,exportRecord.Phone,exportRecord.Detial)
+	_,err=stmt.Exec(&exportRecord.ID,&exportRecord.ImDate,exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate)
 	if err!=nil{
 		err=fmt.Errorf("Export stmt error:%v",err)
 		logs.Error(err)
@@ -144,7 +144,7 @@ func SearchExportList(id string)(exportRecord *ExportRecord,err error){
 func SearchExportListByTime(year int,month int)(exportRecords []ExportRecord,err error){
 	nextDate:=nextMonth(year,month)
 	nowDate:=timeToString(year,month)
-	rows,err:=db.Query("Select eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate,profit from import_records where imdate>=$1 and imdate<$2 order by eid asc",nowDate,nextDate)
+	rows,err:=db.Query("Select eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate,profit from export_records where edate>=$1 and edate<$2 order by eid asc",nowDate,nextDate)
 	if err!=nil{
 		logs.Error(err)
 		return

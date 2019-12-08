@@ -7,6 +7,7 @@ import {AuthGuard} from './guards/auth.guard'
 import {RegistComponent} from './components/regist/regist.component'
 import { ImportComponent } from './components/import/import.component';
 import { AmountComponent } from './components/amount/amount.component';
+import { ExportComponent } from './components/export/export.component';
 
 const routes: Routes = [
   {path:"login",component:LoginComponent},
@@ -17,6 +18,7 @@ const routes: Routes = [
   {path:'regist',component:RegistComponent},
   {path:'import',component:ImportComponent},
   {path:'amount',component:AmountComponent},
+  {path:'export',component:ExportComponent},
   {path:'**',redirectTo:'login'}
 ];
 

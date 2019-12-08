@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { ExportRe } from '../amount/exportRe';
 import {GoodService} from '../../services/good.service'
 import { NzMessageService } from 'ng-zorro-antd/message';
+import {Good} from '../goodslist/good'
 
 @Component({
   selector: 'app-export',
@@ -15,6 +16,7 @@ export class ExportComponent implements OnInit {
   totalPrice:number=0
   isDisabled:boolean=true
   exportRecord:ExportRe={}
+  @Input() good:Good
 
   constructor(private fb: FormBuilder) { }
 

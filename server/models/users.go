@@ -55,14 +55,14 @@ func SearchUserByName(name string)(users []User,err error){
 		return
 	}
 	// user=new(User)
-	rows,err:=db.Query("select name,username,phone,role,password from users where name=$1",name)
+	rows,err:=db.Query("select name,username,phone,role from users where name=$1",name)
 	if err!=nil{
 		logs.Error(err)
 		return
 	}
 	for rows.Next(){
 		var user User
-		err=rows.Scan(&user.Name,&user.ActualName,user.Phone,&user.Role,&user.Password)
+		err=rows.Scan(&user.Name,&user.ActualName,&user.Phone,&user.Role)
 		if err!=nil{
 			err=fmt.Errorf("scan user error:%v",err)
 			logs.Error(err)
@@ -178,12 +178,12 @@ func UpdateUser(user *User)(err error){
 		logs.Error(err)
 		return
 	}
-	stmt,err:=db.Prepare("Update users set name=$1,password=$2,phone=$3 where username=$4")
+	stmt,err:=db.Prepare("Update users set name=$1,password=$2,phone=$3,role=$4 where username=$5")
 	if err!=nil{
 		logs.Error(err)
 		return
 	}
-	_,err=stmt.Exec(user.ActualName,user.Password,user.Phone,user.Name)
+	_,err=stmt.Exec(user.ActualName,user.Password,user.Phone,user.Role,user.Name)
 	if err!=nil{
 		logs.Error(err)
 		return

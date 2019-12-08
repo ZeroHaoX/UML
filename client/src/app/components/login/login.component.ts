@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { LoginService } from 'src/app/services/login.service';
 import User from '../../guards/usermodel'
 import { UrlResolver } from '@angular/compiler';
+import { NzMessageService } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private http:HttpClient,
     private router:Router,
-    private loginServic:LoginService
+    private loginServic:LoginService,
+    private message:NzMessageService
   ) { }
 
   ngOnInit() {
@@ -42,16 +44,20 @@ export class LoginComponent implements OnInit {
     this.loginServic.login(userName,password).subscribe(
       (resp)=>{
         // console.log(resp.data)
-        if(resp.status==0){
+        if(resp.status==0&&resp.rowCount>0){
           User.userName=resp.data.username
           User.role=resp.data.role
           User.permissions=resp.data.permissions
+          // console.log(resp.data.username)
           localStorage.setItem("userName",resp.data.username)
           localStorage.setItem("role",resp.data.role)
           // User.Password=resp.data.password
-          console.log(resp)
+          // console.log(resp)
+          this.message.info("登录成功！")
           this.router.navigate(['/goods'])
+          // console.log("??????????????")
         }else{
+          this.message.error("用户信息错误！")
           return
         }
 

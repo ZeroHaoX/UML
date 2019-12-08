@@ -60,7 +60,7 @@
                                             <nz-divider nzType="vertical"></nz-divider>
                                             <a style="color: green;"
                                             (click)="export(good)"
-                                            >出货</a>
+                                            >出售</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -149,9 +149,9 @@
                         </nz-modal>
             </nz-tab>
             <nz-tab nzTitle="进货">
-                <app-import></app-import>
+                <app-import (refresh)='refreshList()'></app-import>
             </nz-tab>
-          </nz-tabset>
+    </nz-tabset>
     
  
   </nz-content>

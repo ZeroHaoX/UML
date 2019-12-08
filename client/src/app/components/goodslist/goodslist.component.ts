@@ -86,6 +86,31 @@ export class GoodslistComponent implements OnInit {
     // console.log(this.selectedGood)
   }
 
+  refreshList(){
+    console.log("刷新")
+    this.goodService.GoodList(this.page,this.getSize,this.orderBy).subscribe(
+      (response)=>{
+        if(response.status==-1){
+          console.error(`get goodlist error:${response.msg}`)
+          return
+        }
+        if(typeof response.data=='undefined'){
+          console.error("goodlist data is undefinded")
+          return
+        }
+        if(response.data===null){
+          this.goodsList=[]
+          // console.log("asdasdsadad")
+          return
+        }
+        // console.log(response.data)
+        this.goodsList=response.data
+        this.total=response.rowCount
+        // console.log(this.goods)
+        this.goods=this.goodsList.slice(0,this.pageSize)
+      })
+  }
+
   handleOk(): void {
     // console.log('Button ok clicked!');
     console.log("修改:",this.selectedGood)

@@ -111,7 +111,7 @@ func LoginHand(w http.ResponseWriter,r *http.Request){
 	}
 	http.SetCookie(w,cookie)
 	
-	SuccessResponse(w,r,userMes,"登录成功",0)
+	SuccessResponse(w,r,userMes,"登录成功",1)
 
 }
 
@@ -831,20 +831,6 @@ func UsersListHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	//数据映射，利于防止DDOS攻击
-	// data,ok:=body["data"].(map[string]interface{})
-	// if !ok{
-	// 	err=fmt.Errorf("UserListHand get data error")
-	// 	logs.Error(err)
-	// 	ErrorResponse(w,r,err,500)
-	// 	return
-	// }
-	// if data==nil{
-	// 	err=fmt.Errorf("UserListHand get data nil")
-	// 	logs.Error(err)
-	// 	ErrorResponse(w,r,err,500)
-	// 	return
-	// }
 	orderBy,ok:=body["orderBy"].(string)
 	if !ok{
 		err=fmt.Errorf("UserListHand get orderby error")
@@ -963,12 +949,24 @@ func UpdateUserHand(w http.ResponseWriter,r *http.Request){
 	}
 	user.Password,ok=data["password"].(string)
 	if !ok{
-		err=fmt.Errorf("get password error")
+		err=fmt.Errorf("get Password error")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 	}
 	if user.Password==""||common.HasSpecialCharacter(user.Password){
 		err=fmt.Errorf("get password error:password=%v",user.Password)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	user.Role,ok=data["role"].(string)
+	if !ok{
+		err=fmt.Errorf("get Role error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+	}
+	if user.Role==""||common.HasSpecialCharacter(user.Role){
+		err=fmt.Errorf("get password error:Role=%v",user.Role)
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
@@ -1275,7 +1273,7 @@ func SearchUsersHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	// logs.Debug(userList)
+	logs.Debug(len(userList))
 	SuccessResponse(w,r,userList,"查询成功！",len(userList))
 }
 

@@ -99,8 +99,31 @@ export class GoodService {
     )
   }
 
+  ImportList(page:number,pageSize:number,orderBy:string):Observable<ReplyProto>{
+    if(page<0||page==null||page==undefined){
+      console.error("page is error:",page)
+      return of({status:-1,msg:"数据传输有误！"})
+    }
+    if(pageSize<0||pageSize==null||pageSize==undefined){
+      console.error("pageSize is error:",pageSize)
+      return of({status:-1,msg:"数据传输有误！"})
+    }
+    if(orderBy!="desc" && orderBy!="asc"){
+      console.error("orderBy is error:",orderBy)
+      return of({status:-1,msg:"数据传输有误！"})
+    }
+    // console.log("传输")
+    let api="/api/import/list"
+    this.reqProto.orderBy=orderBy
+    this.reqProto.page=page
+    this.reqProto.pageSize=pageSize
+    return this.http.post(api,this.reqProto,httpOptions).pipe(
+      catchError(err=>this.handleError(err))
+    )
+  }
+
     //出货
-    Export(exportRecord:ExportRe):Observable<ReplyProto>{
+  Export(exportRecord:ExportRe):Observable<ReplyProto>{
       if(exportRecord==null||typeof exportRecord=='undefined'||exportRecord.eid==""){
         console.error("exportRecord is null")
         return of({status:-1,msg:"exportRecord is nil"})
@@ -110,7 +133,30 @@ export class GoodService {
       return  this.http.post<ReplyProto>(api,this.reqProto,httpOptions).pipe(
         catchError(err=>this.handleError(err))
       )
+  }
+
+  ExportList(page:number,pageSize:number,orderBy:string):Observable<ReplyProto>{
+    if(page<0||page==null||page==undefined){
+      console.error("page is error:",page)
+      return of({status:-1,msg:"数据传输有误！"})
     }
+    if(pageSize<0||pageSize==null||pageSize==undefined){
+      console.error("pageSize is error:",pageSize)
+      return of({status:-1,msg:"数据传输有误！"})
+    }
+    if(orderBy!="desc" && orderBy!="asc"){
+      console.error("orderBy is error:",orderBy)
+      return of({status:-1,msg:"数据传输有误！"})
+    }
+    // console.log("传输")
+    let api="/api/export/list"
+    this.reqProto.orderBy=orderBy
+    this.reqProto.page=page
+    this.reqProto.pageSize=pageSize
+    return this.http.post(api,this.reqProto,httpOptions).pipe(
+      catchError(err=>this.handleError(err))
+    )
+  }
 
   // 月结出货和出货记录
   ExportAndImportRecord(year:string,month:string):Observable<ReplyProto>{

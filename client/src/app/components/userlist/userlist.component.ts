@@ -52,7 +52,23 @@ export class UserlistComponent implements OnInit {
   }
 
   search(){
-    this.userService.Query(this.filter)
+    if(this.filter==""){
+      this.nzMessageService.error("搜索条件不能为空")
+      return
+    }
+    this.userService.Query(this.filter).subscribe(
+      (resp)=>{
+        // console.log(resp.status)
+        if(resp.status==0){
+          this.usersList=resp.data
+          this.total=resp.rowCount
+          this.users=this.usersList.slice(0,10)
+          this.nzMessageService.info("搜索成功")
+        }{
+          this.nzMessageService.error("请检查网络状况")
+        }
+      }
+    )
   }
 
   remove(user:User){

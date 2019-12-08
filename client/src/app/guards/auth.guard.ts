@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
     /*是否登录*/
     if(!this.checkLogin()){
       this.router.navigate(['login'])
-      console.log("跳转登录")
+      // console.log("跳转登录")
       return false
     }
     // /*查找是否有权限 */
@@ -44,6 +44,7 @@ export class AuthGuard implements CanActivate {
   checkLogin():boolean{
     let userName=localStorage.getItem("userName")
     if(userName==""||userName==null||userName==undefined){
+      console.log("????????????")
       return false
     }
     //用户model为空，即刷新了，重新用token获取用户信息

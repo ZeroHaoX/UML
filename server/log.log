@@ -284,3 +284,10 @@
 2019/12/08 16:07:29.827 [D] [account.go:23]  2019-1201
 2019/12/08 16:07:29.836 [E] [im_records.go:139]  pq: invalid input syntax for type date: "2019-1201"
 2019/12/08 16:07:29.846 [E] [handfunc.go:1035]  pq: invalid input syntax for type date: "2019-1201"
+2019/12/08 16:08:04.468 [D] [account.go:23]  2019-12-01
+2019/12/08 16:08:04.490 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 16:08:04.490 [D] [account.go:23]  2019-12-01
+2019/12/08 16:08:04.503 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 16:08:04.503 [D] [account.go:23]  2019-12-01
+2019/12/08 16:08:04.512 [E] [ex_records.go:149]  pq: column "eid" does not exist
+2019/12/08 16:08:04.518 [E] [handfunc.go:1042]  pq: column "eid" does not exist

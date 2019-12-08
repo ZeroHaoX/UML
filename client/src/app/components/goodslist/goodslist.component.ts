@@ -14,7 +14,7 @@ export class GoodslistComponent implements OnInit {
   pageIndex:number=1
   getSize:number=50
   pageSize:number=10
-  orderBy:string="asc"
+  orderBy:string="desc"
   updateModel=false
   selectedGood:Good={}
   goods:Array<Good>

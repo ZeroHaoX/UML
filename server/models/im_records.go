@@ -57,12 +57,12 @@ func Import(importRecord ImportRecord)(err error){
 		logs.Error(err)
 		return
 	}
-	stmt,err:=db.Prepare("Insert into import_records values($1,$2,$3,$4,$5,$6,$7,$8,$9)")
+	stmt,err:=db.Prepare("Insert into import_records(imid,gname,imprice,imcount,imtotalprice,shipper,sphone,detial) values($1,$2,$3,$4,$5,$6,$7,$8)")
 	if err!=nil{
 		logs.Error(err)
 		return
 	}
-	_,err=stmt.Exec(importRecord.ID,importRecord.Imdate,importRecord.GoodName,importRecord.Price,importRecord.Count,importRecord.TotalPrice,importRecord.Shipper,importRecord.SPhone,importRecord.Detial)
+	_,err=stmt.Exec(importRecord.ID,importRecord.GoodName,importRecord.Price,importRecord.Count,importRecord.TotalPrice,importRecord.Shipper,importRecord.SPhone,importRecord.Detial)
 	if err!=nil{
 		logs.Error(err)
 		return
@@ -114,9 +114,14 @@ func SearchImports(id string)(importRecord *ImportRecord,err error){
 		logs.Error(err)
 		return
 	}
-	row:=db.QueryRow(`Select * from import_records where id=$1`,id)
-	if row!=nil{
-		err=row.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.SPhone,&importRecord.Imdate)
+	importRecord=new(ImportRecord)
+	rows,err:=db.Query(`Select * from import_records where imid=$1`,id)
+	if err!=nil{
+		logs.Error(err)
+		return
+	}
+	for rows.Next(){
+		err=rows.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.SPhone,&importRecord.Imdate)
 		if err!=nil{
 			logs.Error(err)
 			return

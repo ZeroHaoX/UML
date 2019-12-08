@@ -213,7 +213,7 @@ func RegisteHand(w http.ResponseWriter,r *http.Request){
 
 //出货
 func ExportHand(w http.ResponseWriter,r *http.Request){
-	ok,err:=CheckPermission(r,"出货管理")
+	ok,err:=CheckPermission(r,"出货")
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
@@ -371,7 +371,7 @@ func ExportHand(w http.ResponseWriter,r *http.Request){
 
 //进货
 func ImportHand(w http.ResponseWriter,r *http.Request){
-	ok,err:=CheckPermission(r,"进货管理")
+	ok,err:=CheckPermission(r,"进货")
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
@@ -401,6 +401,7 @@ func ImportHand(w http.ResponseWriter,r *http.Request){
 		return
 	}
 	var importRecord models.ImportRecord
+	// logs.Debug(data)
 	importRecord.ID,ok=data["id"].(string)
 	if !ok{
 		err=fmt.Errorf("ImportHand get import id error")
@@ -427,7 +428,7 @@ func ImportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	importRecord.Price,ok=data["price"].(float64)
+	importRecord.Price,ok=data["imprice"].(float64)
 	if !ok{
 		err=fmt.Errorf("ImportHand get import price error")
 		logs.Error(err)
@@ -440,7 +441,7 @@ func ImportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	count,ok:=data["count"].(float64)
+	count,ok:=data["imcount"].(float64)
 	if !ok{
 		err=fmt.Errorf("ImportHand get import count error")
 		logs.Error(err)
@@ -455,7 +456,7 @@ func ImportHand(w http.ResponseWriter,r *http.Request){
 	}
 	importRecord.Count=int(count)
 	totalPrice:=importRecord.Price*count
-	importRecord.TotalPrice,ok=data["totalprice"].(float64)
+	importRecord.TotalPrice,ok=data["imtotalprice"].(float64)
 	if !ok{
 		err=fmt.Errorf("ImportHand get import totalprice error")
 		logs.Error(err)

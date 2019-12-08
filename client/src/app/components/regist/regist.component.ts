@@ -54,6 +54,8 @@ export class RegistComponent implements OnInit {
     }
     return {};
   };
+
+  
  
 
   user:User={}

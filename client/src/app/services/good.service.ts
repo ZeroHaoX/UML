@@ -87,7 +87,7 @@ export class GoodService {
 
   //进货
   Import(imRecord:ImportRecord):Observable<ReplyProto>{
-    if(imRecord==null||typeof imRecord=='undefined'){
+    if(imRecord==null||typeof imRecord=='undefined'||imRecord.id==""){
       console.error("imRecord is null")
       return of({status:-1,msg:"imRecord is nil"})
     }

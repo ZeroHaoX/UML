@@ -40,10 +40,20 @@ export class ImportComponent implements OnInit {
       confirm("请填写正确的进货单信息！")
       return
     }
+    this.importRecord.id=this.importForm.controls.importID.value
+    this.importRecord.gname=this.importForm.controls.gname.value
+    this.importRecord.shipper=this.importForm.controls.shipper.value
+    this.importRecord.sphone=this.importForm.controls.phone.value
+    this.importRecord.imcount=this.importForm.controls.count.value
+    this.importRecord.imprice=this.importForm.controls.price.value
+    this.importRecord.imtotalprice=this.importForm.controls.totalPrice.value
+    this.importRecord.detial=this.importForm.controls.detial.value
     this.goodService.Import(this.importRecord).subscribe(
       (resp)=>{
         if(resp.status==0){
-          this.message.info('添加成功！\n请到商品信息管理界面更改售价');
+          this.message.info('添加成功！\n可前往商品信息管理界面更改售价');
+        }else{
+          this.message.error('添加失败！请检查你的信息填写');
         }
       }
     )

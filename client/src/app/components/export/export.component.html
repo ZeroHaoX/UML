@@ -1,15 +1,13 @@
-<h2 style="margin-left: 200px;margin-bottom: 30px;">出货单据</h2>
-        <form nz-form [formGroup]="importForm" (ngSubmit)="submitForm()">
+<!-- <h2 style="margin-left: 170px;margin-bottom: 30px;">出货单据</h2>
+        <form nz-form [formGroup]="exportForm" (ngSubmit)="submitForm()">
                 <nz-form-item>
-                        <nz-form-label [nzSpan]="7" nzRequired>商品信息</nz-form-label>
-                        <nz-form-label [nzSpan]="7" nzRequired>商品名称:{{good.gname}}</nz-form-label>
-                        <nz-form-label [nzSpan]="7" nzRequired>商品单价:{{good.price}}</nz-form-label>
-                        <nz-form-label [nzSpan]="7" nzRequired>商品名称:{{good.gname}}</nz-form-label>
-                    </nz-form-item>
+                        <span style="margin-left: 50px;display: inline-block;font-weight: bold;margin-right: 10px;">商品名称:</span><span style="display: inline-block;">{{good.gname}}</span>
+                        <span style="margin-left: 100px;display: inline-block;font-weight: bold;margin-right: 10px;">商品单价:</span><span style="display: inline-block;">{{good.price}}(元/个)</span>
+                </nz-form-item>
                 <nz-form-item>
                     <nz-form-label [nzSpan]="7" nzRequired>出货单号</nz-form-label>
                     <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入正确的单号!">
-                        <input nz-input formControlName="importID" placeholder="填写单号" type="text" />
+                        <input nz-input formControlName="eid" placeholder="填写单号" type="text" />
                         <ng-template  let-control>
                             <ng-container *ngIf="control.hasError('required')">
                                 请输入正确的单号!
@@ -31,7 +29,7 @@
                 <nz-form-item>
                         <nz-form-label [nzSpan]="7" nzRequired>买家联系电话</nz-form-label>
                         <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入买家联系电话!">
-                            <input nz-input formControlName="phone" placeholder="填写买家联系电话" type="text" />
+                            <input nz-input formControlName="bphone" placeholder="填写买家联系电话" type="text" />
                             <ng-template  let-control>
                                 <ng-container *ngIf="control.hasError('required')">
                                     请输入买家联系电话!
@@ -43,19 +41,19 @@
                         </nz-form-control>
                     </nz-form-item>
                 <nz-form-item>
-                    <nz-form-label [nzSpan]="7" nzRequired style="display: inline-block;">数量</nz-form-label>
+                    <nz-form-label [nzSpan]="7" nzRequired style="display: inline-block;width: 100px;">数量</nz-form-label>
                     <nz-form-control [nzSpan]="12" nzHasFeedback style="width: 100px;">
-                    <nz-input-number formControlName="count" [nzMin]="0" [nzStep]="1"></nz-input-number>
+                    <nz-input-number formControlName="ecount" [nzMin]="1" [nzStep]="1"></nz-input-number>
                     </nz-form-control>
                      <nz-form-label [nzSpan]="7" nzRequired style="display: inline-block;width: 100px;margin-left: 20px;">单价（个/元）</nz-form-label>
                         <nz-form-control [nzSpan]="12" nzHasFeedback style="width: 100px;">
-                            <nz-input-number formControlName="price" [nzMin]="0" [nzStep]="1"></nz-input-number>
+                            <nz-input-number formControlName="eprice" [nzMin]="0" [nzStep]="1" (nzFocus)="getPrice()"></nz-input-number>
                         </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
                     <nz-form-label [nzSpan]="7" nzRequired>总价（元）</nz-form-label>
                     <nz-form-control [nzSpan]="12" nzHasFeedback>
-                        <nz-input-number formControlName="totalPrice" [nzMin]="0" (nzFocus)="countTotalPrice()"></nz-input-number>
+                        <nz-input-number formControlName="etotalPrice" [nzMin]="0" (nzFocus)="countTotalPrice()" style="width: 200px;"></nz-input-number>
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
@@ -65,8 +63,8 @@
                         </nz-form-control>
                     </nz-form-item>
                 <nz-form-item>
-                    <button nz-button [nzType]="'primary'" [disabled]="!importForm.valid" style="margin-left: 600px;width: 200px;height: 50px;">
+                    <button nz-button [nzType]="'primary'" [disabled]="!importForm.valid" style="margin-left: 20px;width: 100px;height: 20px;">
                         <span>确定</span>
                     </button>
                 </nz-form-item>
-        </form>
+        </form> -->

@@ -68,7 +68,7 @@ export class ImportComponent implements OnInit {
       count:[0,[Validators.required]],
       price:[0,[Validators.required]],
       totalPrice:[0,[Validators.required]],
-      detial:[null]
+      detial:['']
     })
     // this.totalPrice=this.importForm.controls.count.value*this.importForm.controls.price.value
     // this.importForm.controls.totalPrice.setValue(this.totalPrice)

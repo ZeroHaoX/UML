@@ -5,6 +5,7 @@ import {GoodService} from '../../services/good.service'
 import { NzMessageService } from 'ng-zorro-antd/message';
 import {Good} from '../goodslist/good'
 
+
 @Component({
   selector: 'app-export',
   templateUrl: './export.component.html',
@@ -12,11 +13,11 @@ import {Good} from '../goodslist/good'
 })
 export class ExportComponent implements OnInit {
 
-  importForm: FormGroup;
+  exportForm: FormGroup;
   totalPrice:number=0
   isDisabled:boolean=true
   exportRecord:ExportRe={}
-  @Input() good:Good
+  @Input() good:Good={}
 
   constructor(private fb: FormBuilder) { }
 
@@ -33,23 +34,23 @@ export class ExportComponent implements OnInit {
   }
 
   countTotalPrice(){
-    this.totalPrice=this.importForm.controls.count.value*this.importForm.controls.price.value
-    this.importForm.controls.totalPrice.setValue(this.totalPrice)
+    this.totalPrice=this.exportForm.controls.ecount.value*this.exportForm.controls.eprice.value
+    this.exportForm.controls.etotalPrice.setValue(this.totalPrice)
   }
 
   submitForm(){
-    if(!this.importForm.valid){
+    if(!this.exportForm.valid){
       confirm("请填写正确的进货单信息！")
       return
     }
-    this.exportRecord.eid=this.importForm.controls.importID.value
-    this.exportRecord.gname=this.importForm.controls.gname.value
-    this.exportRecord.shipper=this.importForm.controls.shipper.value
-    this.exportRecord.bphone=this.importForm.controls.phone.value
-    this.exportRecord.ecount=this.importForm.controls.count.value
-    this.exportRecord.eprice=this.importForm.controls.price.value
-    this.exportRecord.etotalprice=this.importForm.controls.totalPrice.value
-    this.exportRecord.detial=this.importForm.controls.detial.value
+    this.exportRecord.eid=this.exportForm.controls.importID.value
+    this.exportRecord.gname=this.exportForm.controls.gname.value
+    this.exportRecord.shipper=this.exportForm.controls.shipper.value
+    this.exportRecord.bphone=this.exportForm.controls.phone.value
+    this.exportRecord.ecount=this.exportForm.controls.count.value
+    this.exportRecord.eprice=this.exportForm.controls.price.value
+    this.exportRecord.etotalprice=this.exportForm.controls.totalPrice.value
+    this.exportRecord.detial=this.exportForm.controls.detial.value
 
     // this.exportRecord.Import(this.importRecord).subscribe(
     //   (resp)=>{
@@ -62,17 +63,23 @@ export class ExportComponent implements OnInit {
     // )
   }
 
+  getPrice(){
+    console.log(this.good.price)
+    this.exportForm.controls.eprice.setValue(this.good.price)
+  }
+
   ngOnInit() {
-    this.importForm=this.fb.group({
-      importID:[null, [Validators.required]],
-      gname:[null, [Validators.required]],
-      shipper:[null, [Validators.required]],
-      phone:[null,[Validators.required,this.mobileValidator]],
-      count:[0,[Validators.required]],
-      price:[0,[Validators.required]],
-      totalPrice:[0,[Validators.required]],
+    this.exportForm=this.fb.group({
+      eid:[null, [Validators.required]],
+      // gname:[null, [Validators.required]],
+      buyer:[null, [Validators.required]],
+      bphone:[null,[Validators.required,this.mobileValidator]],
+      ecount:[1,[Validators.required]],
+      eprice:[0,[Validators.required]],
+      etotalPrice:[0,[Validators.required]],
       detial:[null]
     })
+    // console.log(this.good)
     // this.totalPrice=this.importForm.controls.count.value*this.importForm.controls.price.value
     // this.importForm.controls.totalPrice.setValue(this.totalPrice)
   }

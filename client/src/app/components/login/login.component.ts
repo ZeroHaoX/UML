@@ -46,6 +46,8 @@ export class LoginComponent implements OnInit {
           User.userName=resp.data.username
           User.role=resp.data.role
           User.permissions=resp.data.permissions
+          localStorage.setItem("userName",resp.data.username)
+          localStorage.setItem("role",resp.data.role)
           // User.Password=resp.data.password
           console.log(resp)
           this.router.navigate(['/goods'])

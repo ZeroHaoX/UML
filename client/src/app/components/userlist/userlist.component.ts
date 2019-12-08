@@ -51,6 +51,9 @@ export class UserlistComponent implements OnInit {
     )
   }
 
+  search(){
+    this.userService.Query(this.filter)
+  }
 
   remove(user:User){
     if(user==null || typeof user =='undefined'){

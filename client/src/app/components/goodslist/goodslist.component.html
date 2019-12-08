@@ -2,17 +2,17 @@
     <nz-header>
         <app-head></app-head>
     </nz-header>
-  <nz-content style="margin: 50px;">
-    <nz-breadcrumb>
-        <nz-breadcrumb-item>
-          <a>首页</a>
-        </nz-breadcrumb-item>
-        <nz-breadcrumb-item>
-          商品信息管理
-        </nz-breadcrumb-item>
-    </nz-breadcrumb>
-    <h1 style="margin-top: 20px;">商品管理界面</h1>
-    <nz-tabset>
+    <nz-content style="margin: 50px;">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                <a>首页</a>
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                商品信息管理
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+        <h1 style="margin-top: 20px;">商品管理界面</h1>
+        <nz-tabset>
             <nz-tab nzTitle="商品列表">
                     <div style="margin: 20px;width: 40%;">
                             <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
@@ -144,9 +144,9 @@
                                             <!-- <button nz-button [nzType]="'primary'" [disabled]="!importForm.valid" style="margin-left: 20px;width: 100px;height: 20px;">
                                                 <span>确定</span>
                                             </button> -->
-                                        </nz-form-item>
-                                </form>
-                        </nz-modal>
+                        </nz-form-item>
+                    </form>
+                </nz-modal>
             </nz-tab>
             <nz-tab nzTitle="进货">
                 <app-import (refresh)='refreshList()'></app-import>

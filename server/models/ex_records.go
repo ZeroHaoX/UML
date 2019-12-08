@@ -29,6 +29,8 @@ func nextMonth(year int,month int)(timeString string){
 	var m string
 	if month<10{
 		m="0"+strconv.Itoa(month)
+	}else if month >=10 && month<=11{
+		m=strconv.Itoa(month)
 	}
 	if month==12{
 		year++
@@ -152,7 +154,7 @@ func SearchExportListByTime(year int,month int)(exportRecords []ExportRecord,err
 	}
 	for rows.Next(){
 		var exportRecord ExportRecord
-		err=rows.Scan(&exportRecord.ID,&exportRecord.ImDate,exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate,&exportRecord.Profit)
+		err=rows.Scan(&exportRecord.ID,&exportRecord.ImDate,&exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate,&exportRecord.Profit)
 		if err!=nil{
 			logs.Error(err)
 			return

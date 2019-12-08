@@ -15,24 +15,25 @@
         <div style="clear: both;"></div>
         <div style="margin: 20PX;">
             <div>
-                <nz-month-picker [nzRenderExtraFooter]="footerRender" nzPlaceHolder="Select month" ngModel
+                <nz-month-picker [nzRenderExtraFooter]="footerRender" nzPlaceHolder="选择年月" ngModel
                     (ngModelChange)="SearchExportRe($event)"></nz-month-picker>
             </div>
         </div>
         <div>
-            <div style="float: left; margin: 70px;">
+            <div style="float: left;margin-left: 200px;">
                 <h1>本月利润</h1>
-                <h2>{{profit}}</h2>
+                <h2 style="color: orange;">{{profit}}元</h2>
             </div>
-            <div style="float: right;margin: 70px;">
+            <div style="margin-left: 800px;">
                 <h1>本月营业额</h1>
-                <h2>{{turnover}}</h2>
+                <h2 style="color: blue;">{{turnover}}元</h2>
             </div>
         </div>
-
+        <div style="clear: both;"></div>
         <!-- 出货 -->
         <div class="table" style="margin: 20px;">
-            <nz-table nzBordered='true' [nzShowPagination]="true" [nzPageSize]=10 [nzData]="goods" nzShowPagination='false'>
+            <h2>{{exportTitle}}</h2>
+            <nz-table nzBordered='true' [nzPageSize]="pageSize" [nzData]="displayExportRes" nzShowPagination='false'>
                 <thead>
                     <tr>
                         <th nzAlign='center'>序号</th>
@@ -51,7 +52,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let exportRe of displayExportRes let i=index" style="background: white;">
-                        <td nzAlign='center'>{{i+1+(pageIndex-1)*pageSize}}</td>
+                        <td nzAlign='center'>{{i+1+(exportResPageIndex-1)*pageSize}}</td>
                         <td nzAlign='center'>{{ exportRe.eid }}</td>
                         <td nzAlign='center'>{{ exportRe.eprice }}</td>
                         <td nzAlign='center'>{{ exportRe.ecount }}</td>
@@ -66,11 +67,14 @@
                     </tr>
                 </tbody>
             </nz-table>
-            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="exportResTotal" (nzPageIndexChange)="change($event)"></nz-pagination>
+            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="exportResPageIndex"
+                [nzTotal]="exportResTotal" (nzPageIndexChange)="exportResChange($event)"></nz-pagination>
         </div>
         <!-- 进货 -->
+        <div style="height: 60px;"></div>
         <div class="table" style="margin: 20px;">
-            <nz-table nzBordered='true'  [nzPageSize]=10 [nzData]="goods" nzShowPagination='false'>
+            <h2>{{importTitle}}</h2>
+            <nz-table nzBordered='true' [nzPageSize]="pageSize" [nzData]="displayImportRes" nzShowPagination='false'>
                 <thead>
                     <tr>
                         <th nzAlign='center'>序号</th>
@@ -87,7 +91,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let importRe of displayImportRes let i=index" style="background: white;">
-                        <td nzAlign='center'>{{i+1+(pageIndex-1)*pageSize}}</td>
+                        <td nzAlign='center'>{{i+1+(importResPageIndex-1)*pageSize}}</td>
                         <td nzAlign='center'>{{ importRe.id }}</td>
                         <td nzAlign='center'>{{ importRe.gname }}</td>
                         <td nzAlign='center'>{{ importRe.imprice }}</td>
@@ -100,7 +104,8 @@
                     </tr>
                 </tbody>
             </nz-table>
-            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="importResTotal" (nzPageIndexChange)="change($event)"></nz-pagination>
+            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="importResPageIndex"
+                [nzTotal]="importResTotal" (nzPageIndexChange)="importResChange($event)"></nz-pagination>
         </div>
     </nz-content>
 </nz-layout>

@@ -2,158 +2,172 @@
     <nz-header>
         <app-head></app-head>
     </nz-header>
-  <nz-content style="margin: 50px;">
-    <nz-breadcrumb>
-        <nz-breadcrumb-item>
-          <a>首页</a>
-        </nz-breadcrumb-item>
-        <nz-breadcrumb-item>
-          商品信息管理
-        </nz-breadcrumb-item>
-    </nz-breadcrumb>
-    <h1 style="margin-top: 20px;">商品管理界面</h1>
-    <nz-tabset>
+    <nz-content style="margin: 50px;">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                <a>首页</a>
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                商品信息管理
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+        <h1 style="margin-top: 20px;">商品管理界面</h1>
+        <nz-tabset>
             <nz-tab nzTitle="商品列表">
-                    <div style="margin: 20px;width: 40%;">
-                            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-                                    <input type="text" nz-input placeholder="请输入商品名" [(ngModel)]="filter"/>
-                            </nz-input-group>
-                            <ng-template #suffixIconButton>
-                                    <button nz-button nzType="primary" nzSearch (click)="search()"><i nz-icon nzType="search"></i></button>
-                            </ng-template>
-                        </div>
-                        
-                        <div class="table">
-                            <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="goods" nzShowPagination='false' >
-                                <thead>
-                                    <tr>
-                                        <th nzAlign='center'>序号</th>
-                                        <th nzAlign='center'>批次</th>
-                                        <th nzAlign='center'>商品名</th>
-                                        <th nzAlign='center'>进货商</th>
-                                        <th nzAlign='center'>联系方式</th>
-                                        <th nzAlign='center'>数量(个)</th>
-                                        <th nzAlign='center'>售价(个/元)</th>
-                                        <th nzAlign='center'>进价(个/元)</th>
-                                        <th nzAlign='center'>操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let good of goods let i=index" style="background: white;">
-                                        <td nzAlign='center'>{{i+1+(pageIndex-1)*pageSize}}</td>
-                                        <td nzAlign='center'>{{ good.imdate }}</td>
-                                        <td nzAlign='center'>{{ good.gname }}</td>
-                                        <td nzAlign='center'>{{ good.shipper }}</td>
-                                        <td nzAlign='center'>{{ good.sphone }}</td>
-                                        <td nzAlign='center'>{{ good.count }}</td>
-                                        <td nzAlign='center'>{{ good.price }}</td>
-                                        <td nzAlign='center'>{{ good.imprice }}</td>
-                                        <td nzAlign='center'>
-                                            <a (click)="showUpdateModel(good)">修改</a>
-                                            <nz-divider nzType="vertical"></nz-divider>
-                                            <a style="color: orange;"
-                                            nz-popconfirm
-                                            nzPopconfirmTitle="确定要删除吗？"
-                                            nzPopconfirmPlacement="bottom"
-                                            (nzOnConfirm)="confirm(good)"
-                                            >删除</a>
-                                            <nz-divider nzType="vertical"></nz-divider>
-                                            <a style="color: green;"
-                                            (click)="export(good)"
-                                            >出货</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </nz-table>
-                            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="total" (nzPageIndexChange)="change($event)"></nz-pagination>
-                        </div>
-                        <nz-modal [(nzVisible)]="updateModel" nzTitle="信息修改" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
-                            <span>商品名：</span><input nz-input placeholder="商品名" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedGood.gname"/>
-                            <span>进货商：</span><input nz-input placeholder="进货商" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedGood.shipper"/>
-                            <span>联系方式：</span><input nz-input placeholder="联系方式" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedGood.sphone"/>
-                            <span style="margin-top: 10px;margin-left: 5px;">数量：</span><nz-input-number [(ngModel)]="selectedGood.count" [nzMin]="1" [nzStep]="1" [nzFormatter]="formatterCount" [nzParser]="parserCount"></nz-input-number>
-                            <span style="margin-top: 10px;margin-left: 20px;">售价：</span><nz-input-number [(ngModel)]="selectedGood.price" [nzMin]="1" [nzStep]="100" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number>
-                            <!-- <span style="margin-top: 10px;margin-left: 20px;">进价：</span><nz-input-number [(ngModel)]="selectedGood.imprice" [nzMin]="1" [nzStep]="100" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number> -->
-                        </nz-modal>
-                        <nz-modal [(nzVisible)]="exportModel" nzTitle="出货单填写" (nzOnCancel)="exportCancel()" (nzOnOk)="exportOk()" [nzOkDisabled]="!exportForm.valid">
-                                <h2 style="margin-left: 170px;margin-bottom: 30px;">出货单据</h2>
-                                <form nz-form [formGroup]="exportForm">
-                                        <nz-form-item>
-                                                <span style="margin-left: 50px;display: inline-block;font-weight: bold;margin-right: 10px;">商品名称:</span><span style="display: inline-block;">{{selectedGood.gname}}</span>
-                                                <span style="margin-left: 100px;display: inline-block;font-weight: bold;margin-right: 10px;">商品单价:</span><span style="display: inline-block;">{{selectedGood.price}}(元/个)</span>
-                                        </nz-form-item>
-                                        <nz-form-item>
-                                            <nz-form-label [nzSpan]="7" nzRequired>出货单号</nz-form-label>
-                                            <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入正确的单号!">
-                                                <input nz-input formControlName="eid" placeholder="填写单号" type="text" />
-                                                <ng-template  let-control>
-                                                    <ng-container *ngIf="control.hasError('required')">
-                                                        请输入正确的单号!
-                                                    </ng-container>
-                                                </ng-template>
-                                            </nz-form-control>
-                                        </nz-form-item>
-                                        <nz-form-item>
-                                            <nz-form-label [nzSpan]="7" nzRequired>买家</nz-form-label>
-                                            <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入买家信息!">
-                                                <input nz-input formControlName="buyer" placeholder="填写买家姓名" type="text" />
-                                                <ng-template  let-control>
-                                                    <ng-container *ngIf="control.hasError('required')">
-                                                        请输入买家信息!
-                                                    </ng-container>
-                                                </ng-template>
-                                            </nz-form-control>
-                                        </nz-form-item>
-                                        <nz-form-item>
-                                                <nz-form-label [nzSpan]="7" nzRequired>买家联系电话</nz-form-label>
-                                                <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入买家联系电话!">
-                                                    <input nz-input formControlName="bphone" placeholder="填写买家联系电话" type="text" />
-                                                    <ng-template  let-control>
-                                                        <ng-container *ngIf="control.hasError('required')">
-                                                            请输入买家联系电话!
-                                                        </ng-container>
-                                                        <ng-container *ngIf="control.hasError('mobileValidator')">
-                                                                请填写正确联系电话!
-                                                        </ng-container>
-                                                    </ng-template>
-                                                </nz-form-control>
-                                            </nz-form-item>
-                                        <nz-form-item>
-                                            <nz-form-label [nzSpan]="7" nzRequired style="display: inline-block;width: 100px;">数量</nz-form-label>
-                                            <nz-form-control [nzSpan]="12" nzHasFeedback style="width: 100px;">
-                                            <nz-input-number formControlName="ecount" [nzMin]="1" [nzMax]="selectedGood.count" [nzStep]="1"></nz-input-number>
-                                            </nz-form-control>
-                                            <nz-form-label [nzSpan]="7" nzRequired style="display: inline-block;width: 100px;margin-left: 20px;">单价（个/元）</nz-form-label>
-                                                <nz-form-control [nzSpan]="12" nzHasFeedback style="width: 100px;">
-                                                    <nz-input-number formControlName="eprice" [nzMin]="0" [nzStep]="1" (nzFocus)="getPrice()"></nz-input-number>
-                                                </nz-form-control>
-                                        </nz-form-item>
-                                        <nz-form-item>
-                                            <nz-form-label [nzSpan]="7" nzRequired>总价（元）</nz-form-label>
-                                            <nz-form-control [nzSpan]="12" nzHasFeedback>
-                                                <nz-input-number formControlName="etotalPrice" [nzMin]="0" (nzFocus)="countTotalPrice()" style="width: 200px;"></nz-input-number>
-                                            </nz-form-control>
-                                        </nz-form-item>
-                                        <nz-form-item>
-                                                <nz-form-label [nzSpan]="7">说明</nz-form-label>
-                                                <nz-form-control [nzSpan]="12" nzHasFeedback>
-                                                    <textarea nz-input formControlName="detial" rows="5" placeholder="填写出货单说明"></textarea>
-                                                </nz-form-control>
-                                            </nz-form-item>
-                                        <nz-form-item>
-                                            <!-- <button nz-button [nzType]="'primary'" [disabled]="!importForm.valid" style="margin-left: 20px;width: 100px;height: 20px;">
+                <div style="margin: 20px;width: 40%;">
+                    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                        <input type="text" nz-input placeholder="请输入商品名" [(ngModel)]="filter" />
+                    </nz-input-group>
+                    <ng-template #suffixIconButton>
+                        <button nz-button nzType="primary" nzSearch (click)="search()"><i nz-icon
+                                nzType="search"></i></button>
+                    </ng-template>
+                </div>
+
+                <div class="table">
+                    <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="goods" nzShowPagination='false'>
+                        <thead>
+                            <tr>
+                                <th nzAlign='center'>序号</th>
+                                <th nzAlign='center'>批次</th>
+                                <th nzAlign='center'>商品名</th>
+                                <th nzAlign='center'>进货商</th>
+                                <th nzAlign='center'>联系方式</th>
+                                <th nzAlign='center'>数量(个)</th>
+                                <th nzAlign='center'>售价(个/元)</th>
+                                <th nzAlign='center'>进价(个/元)</th>
+                                <th nzAlign='center'>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let good of goods let i=index" style="background: white;">
+                                <td nzAlign='center'>{{i+1+(pageIndex-1)*pageSize}}</td>
+                                <td nzAlign='center'>{{ good.imdate }}</td>
+                                <td nzAlign='center'>{{ good.gname }}</td>
+                                <td nzAlign='center'>{{ good.shipper }}</td>
+                                <td nzAlign='center'>{{ good.sphone }}</td>
+                                <td nzAlign='center'>{{ good.count }}</td>
+                                <td nzAlign='center'>{{ good.price }}</td>
+                                <td nzAlign='center'>{{ good.imprice }}</td>
+                                <td nzAlign='center'>
+                                    <a (click)="showUpdateModel(good)">修改</a>
+                                    <nz-divider nzType="vertical"></nz-divider>
+                                    <a style="color: orange;" nz-popconfirm nzPopconfirmTitle="确定要删除吗？"
+                                        nzPopconfirmPlacement="bottom" (nzOnConfirm)="confirm(good)">删除</a>
+                                    <nz-divider nzType="vertical"></nz-divider>
+                                    <a style="color: green;" (click)="export(good)">出货</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                    <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="total"
+                        (nzPageIndexChange)="change($event)"></nz-pagination>
+                </div>
+                <nz-modal [(nzVisible)]="updateModel" nzTitle="信息修改" (nzOnCancel)="handleCancel()"
+                    (nzOnOk)="handleOk()">
+                    <span>商品名：</span><input nz-input placeholder="商品名" nzSize="large" style="margin-bottom: 10px;"
+                        [(ngModel)]="selectedGood.gname" />
+                    <span>进货商：</span><input nz-input placeholder="进货商" nzSize="large" style="margin-bottom: 10px;"
+                        [(ngModel)]="selectedGood.shipper" />
+                    <span>联系方式：</span><input nz-input placeholder="联系方式" nzSize="large" style="margin-bottom: 10px;"
+                        [(ngModel)]="selectedGood.sphone" />
+                    <span style="margin-top: 10px;margin-left: 5px;">数量：</span>
+                    <nz-input-number [(ngModel)]="selectedGood.count" [nzMin]="1" [nzStep]="1"
+                        [nzFormatter]="formatterCount" [nzParser]="parserCount"></nz-input-number>
+                    <span style="margin-top: 10px;margin-left: 20px;">售价：</span>
+                    <nz-input-number [(ngModel)]="selectedGood.price" [nzMin]="1" [nzStep]="100"
+                        [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number>
+                    <!-- <span style="margin-top: 10px;margin-left: 20px;">进价：</span><nz-input-number [(ngModel)]="selectedGood.imprice" [nzMin]="1" [nzStep]="100" [nzFormatter]="formatterDollar" [nzParser]="parserDollar"></nz-input-number> -->
+                </nz-modal>
+                <nz-modal [(nzVisible)]="exportModel" nzTitle="出货单填写" (nzOnCancel)="exportCancel()"
+                    (nzOnOk)="exportOk()" [nzOkDisabled]="!exportForm.valid">
+                    <h2 style="margin-left: 170px;margin-bottom: 30px;">出货单据</h2>
+                    <form nz-form [formGroup]="exportForm">
+                        <nz-form-item>
+                            <span
+                                style="margin-left: 50px;display: inline-block;font-weight: bold;margin-right: 10px;">商品名称:</span><span
+                                style="display: inline-block;">{{selectedGood.gname}}</span>
+                            <span
+                                style="margin-left: 100px;display: inline-block;font-weight: bold;margin-right: 10px;">商品单价:</span><span
+                                style="display: inline-block;">{{selectedGood.price}}(元/个)</span>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="7" nzRequired>出货单号</nz-form-label>
+                            <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入正确的单号!">
+                                <input nz-input formControlName="eid" placeholder="填写单号" type="text" />
+                                <ng-template let-control>
+                                    <ng-container *ngIf="control.hasError('required')">
+                                        请输入正确的单号!
+                                    </ng-container>
+                                </ng-template>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="7" nzRequired>买家</nz-form-label>
+                            <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入买家信息!">
+                                <input nz-input formControlName="buyer" placeholder="填写买家姓名" type="text" />
+                                <ng-template let-control>
+                                    <ng-container *ngIf="control.hasError('required')">
+                                        请输入买家信息!
+                                    </ng-container>
+                                </ng-template>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="7" nzRequired>买家联系电话</nz-form-label>
+                            <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="请输入买家联系电话!">
+                                <input nz-input formControlName="bphone" placeholder="填写买家联系电话" type="text" />
+                                <ng-template let-control>
+                                    <ng-container *ngIf="control.hasError('required')">
+                                        请输入买家联系电话!
+                                    </ng-container>
+                                    <ng-container *ngIf="control.hasError('mobileValidator')">
+                                        请填写正确联系电话!
+                                    </ng-container>
+                                </ng-template>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="7" nzRequired style="display: inline-block;width: 100px;">数量
+                            </nz-form-label>
+                            <nz-form-control [nzSpan]="12" nzHasFeedback style="width: 100px;">
+                                <nz-input-number formControlName="ecount" [nzMin]="1" [nzMax]="selectedGood.count"
+                                    [nzStep]="1"></nz-input-number>
+                            </nz-form-control>
+                            <nz-form-label [nzSpan]="7" nzRequired
+                                style="display: inline-block;width: 100px;margin-left: 20px;">单价（个/元）</nz-form-label>
+                            <nz-form-control [nzSpan]="12" nzHasFeedback style="width: 100px;">
+                                <nz-input-number formControlName="eprice" [nzMin]="0" [nzStep]="1"
+                                    (nzFocus)="getPrice()"></nz-input-number>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="7" nzRequired>总价（元）</nz-form-label>
+                            <nz-form-control [nzSpan]="12" nzHasFeedback>
+                                <nz-input-number formControlName="etotalPrice" [nzMin]="0" (nzFocus)="countTotalPrice()"
+                                    style="width: 200px;"></nz-input-number>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="7">说明</nz-form-label>
+                            <nz-form-control [nzSpan]="12" nzHasFeedback>
+                                <textarea nz-input formControlName="detial" rows="5" placeholder="填写出货单说明"></textarea>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <!-- <button nz-button [nzType]="'primary'" [disabled]="!importForm.valid" style="margin-left: 20px;width: 100px;height: 20px;">
                                                 <span>确定</span>
                                             </button> -->
-                                        </nz-form-item>
-                                </form>
-                        </nz-modal>
+                        </nz-form-item>
+                    </form>
+                </nz-modal>
             </nz-tab>
             <nz-tab nzTitle="进货">
                 <app-import></app-import>
             </nz-tab>
-          </nz-tabset>
-    
- 
-  </nz-content>
-  <!-- <nz-footer>Footer</nz-footer> -->
+        </nz-tabset>
+
+
+    </nz-content>
+    <!-- <nz-footer>Footer</nz-footer> -->
 </nz-layout>

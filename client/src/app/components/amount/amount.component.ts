@@ -14,8 +14,11 @@ export class AmountComponent implements OnInit {
     private goodService:GoodService
   ) { }
 
+  exportTitle = "本月出货记录"
+  importTitle = "本月进货记录"
   page:number=1
-  pageIndex:number=1
+  exportResPageIndex:number=1
+  importResPageIndex:number=1
   getSize:number=50
   pageSize:number=10
   orderBy:string="desc"
@@ -58,7 +61,6 @@ export class AmountComponent implements OnInit {
       if(response.data===null){
         this.exportRes=[]
         this.importRes=[]
-        // console.log("asdasdsadad")
         return
       }
       this.profit = response.data.account.profit
@@ -66,7 +68,7 @@ export class AmountComponent implements OnInit {
       this.exportRes = response.data.erecord
       this.exportResTotal = this.exportRes.length
       this.importRes = response.data.imrecord
-      this.importResTotal = this.exportRes.length
+      this.importResTotal = this.importRes.length
       this.displayImportRes=this.importRes.slice(0,this.pageSize)
       this.displayExportRes=this.exportRes.slice(0,this.pageSize)
     })
@@ -81,20 +83,21 @@ export class AmountComponent implements OnInit {
     console.log(year,month)
     // 时间改变的时候，就会触发这个函数
     this.goodService.ExportAndImportRecord(year,month).subscribe((response:any)=>{
-      if(typeof response=='undefined'){
-        console.log("无数据")
-        this.exportRes = []
-        this.importRes =[]
-        this.displayImportRes = []
-        this.displayExportRes =[]
-        return
-      }
+      
       if(response.status==-1){
         console.error(`get goodlist error:${response.msg}`)
         return
       }
       if(typeof response.data=='undefined'){
         console.error("goodlist data is undefinded")
+        return
+      }
+      console.log(response)
+      if(response.rowCount==0){
+        this.exportRes = []
+        this.importRes =[]
+        this.displayImportRes = []
+        this.displayExportRes =[]
         return
       }
       if(response.data===null){
@@ -115,14 +118,14 @@ export class AmountComponent implements OnInit {
   }
 
   //换页
-  change(event){
-
-    return
+  exportResChange(event){
+    this.exportResPageIndex=event
+    this.displayExportRes=this.exportRes.slice((event-1)*this.pageSize,event*this.pageSize)
   }
 
-  
-  search(){
-
+  importResChange(event){
+    this.importResPageIndex=event
+    this.displayImportRes=this.importRes.slice((event-1)*this.pageSize,event*this.pageSize)
   }
 
 }

@@ -1,3 +1,4 @@
+// 出货
 export class ExportRe{
     eid?:string
     eprice?:number
@@ -11,4 +12,17 @@ export class ExportRe{
     bphone?:string
     profit?:number
     edate?:number
+}
+
+// 进货
+export class ImportRe{
+    imid?:string
+    gname?:string
+    imprice?:number
+    imcount?:number
+    imtotalprice?:number
+    shipper?:string
+    sphone?:string
+    detial?:string
+    imdate?:string
 }

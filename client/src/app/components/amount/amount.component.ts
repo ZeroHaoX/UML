@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ExportRe } from './exportRe';
+import { ExportRe, ImportRe } from './exportRe';
 import { GoodService } from 'src/app/services/good.service';
 
 
@@ -20,13 +20,15 @@ export class AmountComponent implements OnInit {
   exportTime:string[]
   // 单日时间
   dateTime: Date;
+  // 进货记录
+  importRes:Array<ImportRe>=[]
 
   ngOnInit() {
     this.dateTime = new Date()
     this.exportTime = this.dateTime.toLocaleDateString().split("/",-1)
     var year:string = this.exportTime[0]
     var month:string = this.exportTime[1]
-    this.goodService.ExportRecord(year,month).subscribe((Response:any)=>{
+    this.goodService.ExportAndImportRecord(year,month).subscribe((Response:any)=>{
       console.log(Response)
     })
   }
@@ -38,7 +40,7 @@ export class AmountComponent implements OnInit {
     var month:string = this.exportTime[1]
     console.log(year,month)
     // 时间改变的时候，就会触发这个函数
-    this.goodService.ExportRecord(year,month).subscribe((Response:any)=>{
+    this.goodService.ExportAndImportRecord(year,month).subscribe((Response:any)=>{
       console.log(Response)
     })
   }

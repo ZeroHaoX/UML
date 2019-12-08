@@ -195,3 +195,77 @@
 2019/12/08 14:53:50.453 [D] [handfunc.go:555]  商品信息管理权限有无： true
 2019/12/08 14:53:56.888 [D] [handfunc.go:555]  商品信息管理权限有无： true
 2019/12/08 14:54:08.187 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:38:39.706 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:38:58.578 [D] [handfunc.go:1098]  map[gname:[商品3] imdate:[2019-12-03] shipper:[进货商3]]
+2019/12/08 15:41:34.582 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:41:45.257 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:42:02.810 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:42:11.563 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:42:18.291 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:42:24.340 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:42:45.565 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:42:53.195 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:43:03.794 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:43:09.114 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:43:20.275 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:43:31.921 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:43:38.293 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:43:51.277 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:44:01.623 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:45:02.660 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:45:07.218 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:45:20.388 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:45:32.709 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:45:39.688 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:45:47.107 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:45:55.921 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:46:04.281 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:46:14.668 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:46:22.746 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:46:32.190 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:46:50.326 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:47:01.631 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:47:13.350 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:47:19.713 [D] [handfunc.go:555]  商品信息管理权限有无： true
+2019/12/08 15:53:26.885 [D] [account.go:21]  2019-
+2019/12/08 15:53:26.904 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 15:53:26.905 [D] [account.go:21]  2019-
+2019/12/08 15:53:26.927 [E] [im_records.go:138]  pq: invalid input syntax for type date: "2019-"
+2019/12/08 15:53:26.929 [E] [handfunc.go:1035]  pq: invalid input syntax for type date: "2019-"
+2019/12/08 15:55:03.499 [D] [account.go:23]  2019-12
+2019/12/08 15:55:03.518 [E] [common.go:92]  runtime error: invalid memory address or nil pointer dereference
+2019/12/08 15:56:30.953 [D] [account.go:23]  2019-12
+2019/12/08 15:56:30.972 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 15:56:30.973 [D] [account.go:23]  2019-12
+2019/12/08 15:56:30.993 [E] [im_records.go:138]  pq: invalid input syntax for type date: "2019-12"
+2019/12/08 15:56:31.001 [E] [handfunc.go:1035]  pq: invalid input syntax for type date: "2019-12"
+2019/12/08 15:57:33.168 [D] [account.go:23]  2019-12
+2019/12/08 15:57:33.190 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 15:57:33.198 [D] [account.go:23]  2019-12
+2019/12/08 15:57:33.207 [E] [im_records.go:138]  pq: invalid input syntax for type date: "$1"
+2019/12/08 15:57:33.213 [E] [handfunc.go:1035]  pq: invalid input syntax for type date: "$1"
+2019/12/08 15:57:58.828 [D] [account.go:23]  2019-12
+2019/12/08 15:57:58.851 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 15:57:58.854 [D] [account.go:23]  2019-12
+2019/12/08 15:57:58.884 [E] [im_records.go:138]  pq: invalid input syntax for type date: "2019-12"
+2019/12/08 15:57:58.893 [E] [handfunc.go:1035]  pq: invalid input syntax for type date: "2019-12"
+2019/12/08 16:00:39.290 [D] [account.go:23]  2019-12
+2019/12/08 16:00:39.315 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 16:00:39.320 [D] [account.go:23]  2019-12
+2019/12/08 16:00:39.331 [E] [im_records.go:139]  pq: operator does not exist: date >= integer
+2019/12/08 16:00:39.342 [E] [handfunc.go:1035]  pq: operator does not exist: date >= integer
+2019/12/08 16:01:07.947 [D] [account.go:23]  2019-12
+2019/12/08 16:01:07.966 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 16:01:07.967 [D] [account.go:23]  2019-12
+2019/12/08 16:01:07.981 [E] [im_records.go:139]  pq: operator does not exist: date >= integer
+2019/12/08 16:01:07.982 [E] [handfunc.go:1035]  pq: operator does not exist: date >= integer
+2019/12/08 16:01:52.419 [D] [account.go:23]  2019-1201
+2019/12/08 16:01:52.443 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 16:01:52.452 [D] [account.go:23]  2019-1201
+2019/12/08 16:01:52.462 [E] [im_records.go:139]  pq: operator does not exist: date >= integer
+2019/12/08 16:01:52.469 [E] [handfunc.go:1035]  pq: operator does not exist: date >= integer
+2019/12/08 16:02:42.421 [D] [account.go:23]  2019-1201
+2019/12/08 16:02:42.439 [D] [ex_records.go:41]  2020-01-01
+2019/12/08 16:02:42.440 [D] [account.go:23]  2019-1201
+2019/12/08 16:02:42.459 [E] [im_records.go:139]  pq: operator does not exist: date > integer
+2019/12/08 16:02:42.469 [E] [handfunc.go:1035]  pq: operator does not exist: date > integer

@@ -15,9 +15,11 @@ func timeToString(year int ,month int)(timeString string){
 	var m string
 	if month<10{
 		m="0"+strconv.Itoa(month)
+	}else{
+		m=strconv.Itoa(month)
 	}
 	y:=strconv.Itoa(year)
-	timeString= y+"-"+m
+	timeString= y+"-"+m+"01"
 	logs.Debug(timeString)
 	return 
 }
@@ -29,6 +31,7 @@ func GetAccount(year int,month int)(account *Account,err error){
 		logs.Error(err)
 		return
 	}
+	account = new(Account)
 	for rows.Next(){
 		err=rows.Scan(&account.Profit,&account.Turnover)
 		if err!=nil{

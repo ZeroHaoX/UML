@@ -99,8 +99,8 @@ export class GoodService {
     )
   }
 
-  // 月结出货记录
-  ExportRecord(year:string,month:string):Observable<ReplyProto>{
+  // 月结出货和出货记录
+  ExportAndImportRecord(year:string,month:string):Observable<ReplyProto>{
     if(year==null||typeof year=='undefined'||year==""){
       console.error("year is null")
       return of({status:-1,msg:"year is nil"})
@@ -110,7 +110,7 @@ export class GoodService {
       return of({status:-1,msg:"month is nil"})
 
     }
-    let api='/api/export/query?year='+year+"&"+"month="+month
+    let api='/api/monthly?year='+year+"&"+"month="+month
     return  this.http.get<ReplyProto>(api).pipe(
       catchError(err=>this.handleError(err))
     )

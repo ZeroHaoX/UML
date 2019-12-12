@@ -17,6 +17,7 @@ import { RegistComponent } from './components/regist/regist.component';
 import { ImportComponent } from './components/import/import.component';
 import { AmountComponent } from './components/amount/amount.component';
 import { ExportComponent } from './components/export/export.component';
+import { ImportlistComponent } from './components/importlist/importlist.component';
 
 registerLocaleData(zh);
 
@@ -30,7 +31,8 @@ registerLocaleData(zh);
     RegistComponent,
     ImportComponent,
     AmountComponent,
-    ExportComponent
+    ExportComponent,
+    ImportlistComponent
   ],
   imports: [
     BrowserModule,

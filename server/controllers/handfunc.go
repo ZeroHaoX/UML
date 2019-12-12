@@ -1321,9 +1321,279 @@ func SearchGoodsHand(w http.ResponseWriter,r *http.Request){
 	SuccessResponse(w,r,goodList,"查询成功！",len(goodList))
 }
 
+//出货记录
+func ExportListHand(w http.ResponseWriter,r *http.Request){
+		//权限验证
+		role,ok:=r.Context().Value("role").(string)
+		if !ok{
+			err:=fmt.Errorf("UserListHand get role form context error")
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		if role==""{
+			err:=fmt.Errorf("UserListHand can't get role form context")
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		ok,err:=models.CheckPermission(role,"出货")
+		if err!=nil{
+			err=fmt.Errorf("UserListHand check permission error:%v",err)
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		if !ok{
+			ErrorResponse(w,r,errors.New("权限不足！"),403)
+			return
+		}
+		//body数据读取
+		body,err:=ReadBodyData(r)
+		if err!=nil{
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		orderBy,ok:=body["orderBy"].(string)
+		if !ok{
+			err=fmt.Errorf("ExportListHand get orderby error")
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		if orderBy==""||common.HasSpecialCharacter(orderBy){
+			err=fmt.Errorf("ExportListHand get orderby=%v",orderBy)
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		page,ok:=body["page"].(float64)
+		if !ok{
+			err=fmt.Errorf("ExportListHand get page error")
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		if page<0{
+			err=fmt.Errorf("ExportListHand get page<0")
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		pageSize,ok:=body["pageSize"].(float64)
+		if !ok{
+			err=fmt.Errorf("ExportListHand get pagesize error")
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		if pageSize<0{
+			err=fmt.Errorf("ExportListHand get pagesize<0")
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		//交付db进行数据查询
+		exRecord,err:=models.ExportList(int(page),int(pageSize),orderBy)
+		if err!=nil{
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+	
+		length,err:=models.SearchExportNumber()
+		if err!=nil{
+			logs.Error(err)
+			ErrorResponse(w,r,err,500)
+			return
+		}
+		//成功响应
+		SuccessResponse(w,r,exRecord,"查询成功！",length)
+}
+
 //查找出货信息
 func SearchExportHand(w http.ResponseWriter,r *http.Request){
+	role,ok:=r.Context().Value("role").(string)
+	if !ok{
+		err:=fmt.Errorf("SearchGoodsHand get role form context error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if role==""{
+		err:=fmt.Errorf("SearchGoodsHand can't get role form context")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	ok,err:=models.CheckPermission(role,"出货记录查询")
+	if err!=nil{
+		err=fmt.Errorf("SearchGoodsHand check permission error:%v",err)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if !ok{
+		ErrorResponse(w,r,errors.New("权限不足！"),403)
+		return
+	}
+	values:=r.URL.Query()
+	filter:=values.Get("filter")
+	if filter==""{
+		err:=fmt.Errorf("拿取filter参数为空")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	exReports,err:=models.SearchExport(filter)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	logs.Debug(exReports)
+	// if exReport.ID==""{
+	// 	SuccessResponse(w,r,exReport,"查询成功！",0)
+	// }
+	SuccessResponse(w,r,exReports,"查询成功！",len(exReports))
+}
 
+//出货记录删除
+func DelExportHand(w http.ResponseWriter,r *http.Request){
+	role,ok:=r.Context().Value("role").(string)
+	if !ok{
+		err:=fmt.Errorf("DelUserHand get role form context error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if role==""{
+		err:=fmt.Errorf("DelUserHand can't get role form context")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	ok,err:=models.CheckPermission(role,"出货记录删除")
+	if err!=nil{
+		err=fmt.Errorf("DelUserHand check permission error:%v",err)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if !ok{
+		ErrorResponse(w,r,errors.New("权限不足！"),403)
+		return
+	}
+	data:=r.URL.Query()
+	eid:=data.Get("eid")
+	if eid==""||common.HasSpecialCharacter(eid){
+		err=fmt.Errorf("DelExportHand get eid=%v",eid)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	err=models.DelExport(eid)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	SuccessResponse(w,r,nil,"删除成功！",0)
+}
+
+//出货记录
+func ImportListHand(w http.ResponseWriter,r *http.Request){
+	//权限验证
+	role,ok:=r.Context().Value("role").(string)
+	if !ok{
+		err:=fmt.Errorf("UserListHand get role form context error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if role==""{
+		err:=fmt.Errorf("UserListHand can't get role form context")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	ok,err:=models.CheckPermission(role,"进货")
+	if err!=nil{
+		err=fmt.Errorf("UserListHand check permission error:%v",err)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if !ok{
+		ErrorResponse(w,r,errors.New("权限不足！"),403)
+		return
+	}
+	//body数据读取
+	body,err:=ReadBodyData(r)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	orderBy,ok:=body["orderBy"].(string)
+	if !ok{
+		err=fmt.Errorf("ExportListHand get orderby error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if orderBy==""||common.HasSpecialCharacter(orderBy){
+		err=fmt.Errorf("ExportListHand get orderby=%v",orderBy)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	page,ok:=body["page"].(float64)
+	if !ok{
+		err=fmt.Errorf("ExportListHand get page error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if page<0{
+		err=fmt.Errorf("ExportListHand get page<0")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	pageSize,ok:=body["pageSize"].(float64)
+	if !ok{
+		err=fmt.Errorf("ExportListHand get pagesize error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if pageSize<0{
+		err=fmt.Errorf("ExportListHand get pagesize<0")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	//交付db进行数据查询
+	imRecords,err:=models.ImportList(int(page),int(pageSize),orderBy)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+
+	length,err:=models.SearchImportNumber()
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	
+	// result,err:=models.
+
+	//成功响应
+	SuccessResponse(w,r,imRecords,"查询成功！",length)
 }
 
 //查找进货信息
@@ -1352,38 +1622,66 @@ func SearchImportHand(w http.ResponseWriter,r *http.Request){
 		ErrorResponse(w,r,errors.New("权限不足！"),403)
 		return
 	}
-	data:=r.URL.Query()
-	yearString:=data.Get("year")
-	year,err:=strconv.Atoi(yearString)
-	if err!=nil{
-		err=fmt.Errorf("SearchImportHand get year error")
+	values:=r.URL.Query()
+	filter:=values.Get("filter")
+	if filter==""{
+		err:=fmt.Errorf("拿取filter参数为空")
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
-	monthString:=data.Get("month")
-	month,err:=strconv.Atoi(monthString)
-	if err!=nil{
-		err=fmt.Errorf("SearchImportHand get month error")
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	if !common.CheckDate(year,month){
-		err=fmt.Errorf("SearchImportHand get year=%v,day=%v",year,month)
-		logs.Error(err)
-		ErrorResponse(w,r,err,500)
-		return
-	}
-	
-	importList,err:=models.SearchImportsByTime(year,month)
+	imRecords,err:=models.SearchImportList(filter)
 	if err!=nil{
 		logs.Error(err)
 		ErrorResponse(w,r,err,500)
 		return
 	}
+	logs.Debug(imRecords)
 
-	SuccessResponse(w,r,importList,"查找成功",len(importList))
+	SuccessResponse(w,r,imRecords,"查询成功！",len(imRecords))
+}
+
+//进货记录删除
+func DelImportHand(w http.ResponseWriter,r *http.Request){
+	role,ok:=r.Context().Value("role").(string)
+	if !ok{
+		err:=fmt.Errorf("DelUserHand get role form context error")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if role==""{
+		err:=fmt.Errorf("DelUserHand can't get role form context")
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	ok,err:=models.CheckPermission(role,"进货记录删除")
+	if err!=nil{
+		err=fmt.Errorf("DelUserHand check permission error:%v",err)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	if !ok{
+		ErrorResponse(w,r,errors.New("权限不足！"),403)
+		return
+	}
+	data:=r.URL.Query()
+	imid:=data.Get("id")
+	if imid==""||common.HasSpecialCharacter(imid){
+		err=fmt.Errorf("DelExportHand get imid=%v",imid)
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	err=models.DelImport(imid)
+	if err!=nil{
+		logs.Error(err)
+		ErrorResponse(w,r,err,500)
+		return
+	}
+	SuccessResponse(w,r,nil,"删除成功！",0)
 }
 
 //获取用户信息接口

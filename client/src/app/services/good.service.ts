@@ -122,6 +122,32 @@ export class GoodService {
     )
   }
 
+  DelImport(eid:string):Observable<ReplyProto>{
+    if(eid==""||eid==undefined||eid==null){
+      console.error("eid is error:",eid)
+      return of({status:-1,msg:"数据传输有误！"})
+    }
+    let api="/api/export/del?eid="+eid
+
+    return this.http.get<ReplyProto>(api,{withCredentials:true}).pipe(
+      catchError(err=>this.handleError(err))
+    )
+  }
+
+  QueryImport(filter:string):Observable<ReplyProto>{
+    if(filter==""||filter==null||filter==undefined){
+      console.error("filter is error:",filter)
+      return of({status:-1,msg:"filter is nil"})
+    }
+    let api="/api/import/query?filter="+filter
+
+    return this.http.get<ReplyProto>(api,{withCredentials:true}).pipe(
+      catchError(err=>this.handleError(err))
+    )
+  }
+
+
+
     //出货
   Export(exportRecord:ExportRe):Observable<ReplyProto>{
       if(exportRecord==null||typeof exportRecord=='undefined'||exportRecord.eid==""){
@@ -157,6 +183,31 @@ export class GoodService {
       catchError(err=>this.handleError(err))
     )
   }
+
+  DelExport(eid:string):Observable<ReplyProto>{
+    if(eid==""||eid==undefined||eid==null){
+      console.error("eid is error:",eid)
+      return of({status:-1,msg:"数据传输有误！"})
+    }
+    let api="/api/export/del?eid="+eid
+
+    return this.http.get<ReplyProto>(api,{withCredentials:true}).pipe(
+      catchError(err=>this.handleError(err))
+    )
+  }
+
+  QueryExport(filter:string):Observable<ReplyProto>{
+    if(filter==""||filter==null||filter==undefined){
+      console.error("filter is error:",filter)
+      return of({status:-1,msg:"filter is nil"})
+    }
+    let api="/api/export/query?filter="+filter
+
+    return this.http.get<ReplyProto>(api,{withCredentials:true}).pipe(
+      catchError(err=>this.handleError(err))
+    )
+  }
+
 
   // 月结出货和出货记录
   ExportAndImportRecord(year:string,month:string):Observable<ReplyProto>{

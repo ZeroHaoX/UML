@@ -34,8 +34,8 @@
                                         <th nzAlign='center'>联系方式</th>
                                         <th nzAlign='center'>数量(个)</th>
                                         <th nzAlign='center'>售价(个/元)</th>
-                                        <th nzAlign='center'>进价(个/元)</th>
-                                        <th nzAlign='center'>操作</th>
+                                        <th nzAlign='center' *ngIf="user.role!='普通用户'">进价(个/元)</th>
+                                        <th nzAlign='center' *ngIf="user.role!='普通用户'">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -47,19 +47,21 @@
                                         <td nzAlign='center'>{{ good.sphone }}</td>
                                         <td nzAlign='center'>{{ good.count }}</td>
                                         <td nzAlign='center'>{{ good.price }}</td>
-                                        <td nzAlign='center'>{{ good.imprice }}</td>
-                                        <td nzAlign='center'>
-                                            <a (click)="showUpdateModel(good)">修改</a>
-                                            <nz-divider nzType="vertical"></nz-divider>
+                                        <td nzAlign='center' *ngIf="user.role!='普通用户'">{{ good.imprice }}</td>
+                                        <td nzAlign='center' *ngIf="user.role!='普通用户'">
+                                            <a (click)="showUpdateModel(good)" *ngIf="user.role!='普通用户'">修改</a>
+                                            <nz-divider nzType="vertical"  *ngIf="user.role!='普通用户'"></nz-divider>
                                             <a style="color: orange;"
                                             nz-popconfirm
                                             nzPopconfirmTitle="确定要删除吗？"
                                             nzPopconfirmPlacement="bottom"
                                             (nzOnConfirm)="confirm(good)"
+                                            *ngIf="user.role!='普通用户'"
                                             >删除</a>
-                                            <nz-divider nzType="vertical"></nz-divider>
+                                            <nz-divider nzType="vertical"  *ngIf="user.role!='普通用户'"></nz-divider>
                                             <a style="color: green;"
                                             (click)="export(good)"
+                                            *ngIf="user.role!='普通用户'"
                                             >出售</a>
                                         </td>
                                     </tr>
@@ -148,7 +150,7 @@
                     </form>
                 </nz-modal>
             </nz-tab>
-            <nz-tab nzTitle="进货">
+            <nz-tab nzTitle="进货" *ngIf="user.role!='普通用户'">
                 <app-import (refresh)='refreshList()'></app-import>
             </nz-tab>
     </nz-tabset>

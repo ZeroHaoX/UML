@@ -14,8 +14,8 @@ export class AmountComponent implements OnInit {
     private goodService:GoodService
   ) { }
 
-  exportTitle = "本月出货记录"
-  importTitle = "本月进货记录"
+  exportTitle = "月出货记录"
+  importTitle = "月进货记录"
   page:number=1
   exportResPageIndex:number=1
   importResPageIndex:number=1
@@ -98,6 +98,8 @@ export class AmountComponent implements OnInit {
         this.importRes =[]
         this.displayImportRes = []
         this.displayExportRes =[]
+        this.profit=0
+        this.turnover=0
         return
       }
       if(response.data===null){

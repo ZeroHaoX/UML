@@ -139,6 +139,14 @@ export class UserlistComponent implements OnInit {
     this.updateModel = false
   }
 
+    //换页
+    change(event){
+      // console.log(event)
+      this.pageIndex=event
+      this.users=this.usersList.slice((event-1)*this.pageSize,event*this.pageSize)
+      return
+    }
+
   handleCancel(): void {
     this.updateModel = false
     this.selectedUser={}

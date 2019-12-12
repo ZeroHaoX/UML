@@ -73,28 +73,6 @@ func SearchUserByName(name string)(users []User,err error){
 	return
 }
 
-// //按员工号查询
-// func SearchUserByUno(userName string)(user *User,err error){
-// 	if uno==""||common.HasSpecialCharacter(uno){
-// 		err=fmt.Errorf("userName is error uno=%v",uno)
-// 		logs.Error(err)
-// 		return
-// 	}
-// 	user=new(User)
-// 	row:=db.QueryRow("select * from users where username=$1",uno)
-// 	if row==nil{
-// 		return
-// 	}else{
-// 		err=row.Scan(&user.Name,&user.ActualName,user.Phone,&user.Role)
-// 		if err!=nil{
-// 			err=fmt.Errorf("scan user error:%v",err)
-// 			logs.Error(err)
-// 			return
-// 		}
-// 	}
-// 	return
-// }
-
 //展示用户列表
 func ShowUserList(page int,pageSize int,orderBy string)(users []User,err error){
 	if page<0||pageSize<0||orderBy==""||common.HasSpecialCharacter(orderBy){

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego/logs"
 	"reflect"
+	"time"
 )
 
 type ImportRecord struct{
@@ -20,20 +21,15 @@ type ImportRecord struct{
 	// Profit float32	`json:"profit"`
 }
 
-func ImportList(year int,month int,page int,pageSize int)(importList []*ImportRecord,err error){
-	if !common.CheckDate(year,month){
-		err=fmt.Errorf("year or month is error:year=%v month=%v",year,month)
+func ImportList(page int,pageSize int,orderBy string)(importList []ImportRecord,err error){
+	if page<0||pageSize<0||orderBy==""||common.HasSpecialCharacter(orderBy){
+		err=fmt.Errorf("query parameters has error:page=%v pageSize=%v orderby=%v",page,pageSize,orderBy)
 		logs.Error(err)
 		return
 	}
-	if page<0||pageSize<0{
-		err=fmt.Errorf("page and pageSize error:page=%v,pageSize=%v",page,pageSize)
-		logs.Error(err)
-		return
-	}
-	start:=nextMonth(year,month)
-	end:=nextMonth(year,month+1)
-	queryString:=fmt.Sprintf("select id,gname,imprice,imtotalprice,imcount,detial,shipper,phone,imdate from export_records where imdate>=%v and imdate<%v",start,end,pageSize,page*pageSize)
+	// start:=nextMonth(year,month)
+	// end:=nextMonth(year,month+1)
+	queryString:=fmt.Sprintf("Select imid,gname,imprice,imtotalprice,imcount,detial,shipper,sphone,imdate from import_records order by imdate %v limit %v offset %v ",orderBy,pageSize,(page-1)*pageSize)
 	rows,err:=db.Query(queryString)
 	if err!=nil{
 		logs.Error(err)
@@ -41,12 +37,14 @@ func ImportList(year int,month int,page int,pageSize int)(importList []*ImportRe
 	}
 	for rows.Next(){
 		var importRecord ImportRecord
-		err=rows.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.SPhone,&importRecord.Imdate)
+		var imlocalTime time.Time
+		err=rows.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.SPhone,&imlocalTime)
 		if err!=nil{
 			logs.Error(err)
 			return
 		}
-		importList=append(importList,&importRecord)
+		importRecord.Imdate=imlocalTime.Format("2006-01-02")
+		importList=append(importList,importRecord)
 	}
 	return
 }
@@ -130,6 +128,32 @@ func SearchImports(id string)(importRecord *ImportRecord,err error){
 	return
 }
 
+func SearchImportList(id string)(importRecords []ImportRecord,err error){
+	if id==""||common.HasSpecialCharacter(id){
+		err=fmt.Errorf("SearchImports get id=%v",id)
+		logs.Error(err)
+		return
+	}
+	// importRecord=new(ImportRecord)
+	rows,err:=db.Query("Select imid,gname,imprice,imtotalprice,imcount,detial,shipper,sphone,imdate from import_records where imid=$1",id)
+	if err!=nil{
+		logs.Error(err)
+		return
+	}
+	for rows.Next(){
+		var importRecord ImportRecord
+		var imlocalTime time.Time
+		err=rows.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.SPhone,&imlocalTime)
+		if err!=nil{
+			logs.Error(err)
+			return
+		}
+		importRecord.Imdate=imlocalTime.Format("2006-01-02")
+		importRecords=append(importRecords,importRecord)
+	}
+	return
+}
+
 func SearchImportsByTime(year int,month int)(importRecords []ImportRecord,err error){
 	nextDate:=nextMonth(year,month)
 	nowDate:=timeToString(year,month)
@@ -141,12 +165,31 @@ func SearchImportsByTime(year int,month int)(importRecords []ImportRecord,err er
 	}
 	for rows.Next(){
 		var importRecord ImportRecord
-		err=rows.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.SPhone,&importRecord.Imdate)
+		var imlocalTime time.Time
+		err=rows.Scan(&importRecord.ID,&importRecord.GoodName,&importRecord.Price,&importRecord.TotalPrice,&importRecord.Count,&importRecord.Detial,&importRecord.Shipper,&importRecord.SPhone,&imlocalTime)
 		if err!=nil{
 			logs.Error(err)
 			return
 		}
+		importRecord.Imdate=imlocalTime.Format("2006-01-02")
 		importRecords=append(importRecords,importRecord)
+	}
+	return
+}
+
+
+func SearchImportNumber()(length int,err error){
+	rows,err:=db.Query("Select count(imid) from import_records")
+	if err!=nil{
+		logs.Error(err)
+		return
+	}
+	for rows.Next(){
+		err=rows.Scan(&length)
+		if err!=nil{
+			logs.Error(err)
+			return
+		}
 	}
 	return
 }

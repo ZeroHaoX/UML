@@ -19,7 +19,7 @@ export class LoginComponent implements OnInit {
     private http:HttpClient,
     private router:Router,
     private loginServic:LoginService,
-    private message:NzMessageService
+    private message:NzMessageService,
   ) { }
 
   ngOnInit() {
@@ -64,6 +64,10 @@ export class LoginComponent implements OnInit {
       }
     )
     // this.loginServic.login().subscribe
+  }
+
+  showMessage(){
+    this.message.warning("请联系管理员")
   }
 
 }

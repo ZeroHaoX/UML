@@ -4,7 +4,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	"../common"
 	"fmt"
-	// "time"
+	"time"
 	"strconv"
 	// "reflect"
 )
@@ -44,26 +44,30 @@ func nextMonth(year int,month int)(timeString string){
 	return
 }
 
-func ExportList(year int,month int)(exportList []*ExportRecord,err error){
-	if !common.CheckDate(year,month){
-		err=fmt.Errorf("year or month is error:year=%v month=%v",year,month)
+func ExportList(page int,pageSize int,orderBy string)(exportList []ExportRecord,err error){
+	if page<0||pageSize<0||orderBy==""||common.HasSpecialCharacter(orderBy){
+		err=fmt.Errorf("query parameters has error:page=%v pageSize=%v orderby=%v",page,pageSize,orderBy)
 		logs.Error(err)
 		return
 	}
-	start:=nextMonth(year,month)
-	end:=nextMonth(year,month+1)
-	rows,err:=db.Query("select * from export_records_view(id,gid,gname,eprice,etotalprice,ecount,detial,buyer,phone,edate) where edate>=$1::timestamp and edate<$2::timestamp",start,end)
+	queryString:=fmt.Sprintf("Select eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate,profit from export_records order by edate %v limit %v offset %v ",orderBy,pageSize,(page-1)*pageSize)
+	rows,err:=db.Query(queryString)
 	if err!=nil{
 		logs.Error(err)
 		return
 	}
 	for rows.Next(){
-		var exoprtRecord ExportRecord
-		err=rows.Scan(&exoprtRecord.ID,&exoprtRecord.ImDate,&exoprtRecord.GoodName,&exoprtRecord.Price,&exoprtRecord.TotalPrice,&exoprtRecord.Count,&exoprtRecord.Detial,&exoprtRecord.Buyer,&exoprtRecord.Phone,exoprtRecord.Edate)
+		var exportRecord ExportRecord
+		var elocalTime time.Time
+		var imlocalTime time.Time
+		err=rows.Scan(&exportRecord.ID,&imlocalTime,&exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&elocalTime,&exportRecord.Profit)
 		if err!=nil{
 			logs.Error(err)
 			return
 		}
+		exportRecord.Edate=elocalTime.Format("2006-01-02")
+		exportRecord.ImDate=imlocalTime.Format("2006-01-02")
+		exportList=append(exportList,exportRecord)
 	}
 	return
 }
@@ -127,20 +131,32 @@ func DelExport(id string)(err error){
 	return
 }
 
-func SearchExportList(id string)(exportRecord *ExportRecord,err error){
+func SearchExport(id string)(exportRecords []ExportRecord,err error){
 	if id==""||common.HasSpecialCharacter(id){
-
-	}
-	exportRecord=new(ExportRecord)
-	row:=db.QueryRow("Select * from export_records_view where eid=$1",id)
-	if row==nil{
+		err=fmt.Errorf("id 有误")
+		logs.Error(err)
 		return
 	}
-	err=row.Scan(&exportRecord.ID,&exportRecord.ImDate,exportRecord.GoodName,exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate)
+	// exportRecord=new(ExportRecord)
+	rows,err:=db.Query("Select eid,imdate,gname,shipper,ecount,eprice,etotalprice,buyer,bphone,detial,edate,profit from export_records where eid=$1 ",id)
 	if err!=nil{
 		logs.Error(err)
 		return
 	}
+	for rows.Next(){
+		var elocalTime time.Time
+		var imlocalTime time.Time
+		var exportRecord ExportRecord
+		err=rows.Scan(&exportRecord.ID,&imlocalTime,&exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&elocalTime,&exportRecord.Profit)
+		if err!=nil{
+			logs.Error(err)
+			return
+		}
+		exportRecord.Edate=elocalTime.Format("2006-01-02")
+		exportRecord.ImDate=imlocalTime.Format("2006-01-02")
+		exportRecords=append(exportRecords,exportRecord)
+	}
+
 	return
 }
 
@@ -154,12 +170,33 @@ func SearchExportListByTime(year int,month int)(exportRecords []ExportRecord,err
 	}
 	for rows.Next(){
 		var exportRecord ExportRecord
-		err=rows.Scan(&exportRecord.ID,&exportRecord.ImDate,&exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&exportRecord.Edate,&exportRecord.Profit)
+		var elocalTime time.Time
+		var imlocalTime time.Time
+		err=rows.Scan(&exportRecord.ID,&imlocalTime,&exportRecord.GoodName,&exportRecord.Shipper,&exportRecord.Count,&exportRecord.Price,&exportRecord.TotalPrice,&exportRecord.Buyer,&exportRecord.Phone,&exportRecord.Detial,&elocalTime,&exportRecord.Profit)
 		if err!=nil{
 			logs.Error(err)
 			return
 		}
+		exportRecord.Edate=elocalTime.Format("2006-01-02")
+		exportRecord.ImDate=imlocalTime.Format("2006-01-02")
 		exportRecords=append(exportRecords,exportRecord)
+	}
+	return
+}
+
+
+func SearchExportNumber()(length int,err error){
+	rows,err:=db.Query("Select count(eid) from export_records")
+	if err!=nil{
+		logs.Error(err)
+		return
+	}
+	for rows.Next(){
+		err=rows.Scan(&length)
+		if err!=nil{
+			logs.Error(err)
+			return
+		}
 	}
 	return
 }

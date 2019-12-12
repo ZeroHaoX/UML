@@ -4,6 +4,8 @@ import {GoodService} from '../../services/good.service'
 import { NzMessageService } from 'ng-zorro-antd';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { ExportRe } from '../amount/exportRe';
+import User from '../../guards/usermodel'
+// import { User } from '../userlist/user';
 // import {GoodService} from '../../services/good.service'
 // import { NzMessageService } from 'ng-zorro-antd/message';
 
@@ -14,6 +16,7 @@ import { ExportRe } from '../amount/exportRe';
 })
 export class GoodslistComponent implements OnInit {
 
+  user=User
   page:number=1
   pageIndex:number=1
   getSize:number=50

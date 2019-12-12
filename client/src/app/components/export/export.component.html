@@ -22,51 +22,51 @@
             </ng-template>
         </div>
         
-        <div class="table">
-            <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="users">
+        <nz-table nzBordered='true' [nzPageSize]="pageSize" [nzData]="displayExportRes" nzShowPagination='false'>
                 <thead>
                     <tr>
                         <th nzAlign='center'>序号</th>
                         <th nzAlign='center'>出货单号</th>
-                        <th nzAlign='center'>商品批次</th>
-                        <th nzAlign='center'>商品名</th>
-                        <th nzAlign='center'>进货商</th>
+                        <th nzAlign='center'>出货单价</th>
+                        <th nzAlign='center'>数量</th>
+                        <th nzAlign='center'>总价</th>
                         <th nzAlign='center'>买家</th>
-                        <th nzAlign='center'>买家联系电话</th>
-                        <th nzAlign='center'>单价(个/元)</th>
-                        <th nzAlign='center'>数量(个)</th>
-                        <th nzAlign='center'>总价(元)</th>
-                        <th nzAlign='center'>说明</th>
-                        <th nzAlign='center'>出货日期</th>
+                        <th nzAlign='center'>其他说明</th>
+                        <th nzAlign='center'>商品批次</th>
+                        <th nzAlign='center'>商品名称</th>
+                        <th nzAlign='center'>进货商</th>
+                        <th nzAlign='center'>联系方式</th>
+                        <th nzAlign='center'>日期</th>
+                        <th nzAlign='center'>操作</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let export of exports let i=index" style="background: white;">
-                        <td nzAlign='center'>{{ export.eid }}</td>
-                        <td nzAlign='center'>{{ export.imdate }}</td>
-                        <td nzAlign='center'>{{ export.gname }}</td>
-                        <td nzAlign='center'>{{ export.shipper }}</td>
-                        <td nzAlign='center'>{{ export.buyer }}</td>
-                        <td nzAlign='center'>{{ export.bphone }}</td>
-                        <td nzAlign='center'>{{ export.eprice }}</td>
-                        <td nzAlign='center'>{{ export.ecount }}</td>
-                        <td nzAlign='center'>{{ export.etotalprice }}</td>
-                        <td nzAlign='center'>
-                            <a *ngIf="user.role!='超级管理员'" (click)="showUpdateModel(user)">修改</a>
-                            <nz-divider nzType="vertical" *ngIf="user.role!='超级管理员'"></nz-divider>
+                    <tr *ngFor="let exportRe of displayExportRes let i=index" style="background: white;">
+                        <td nzAlign='center'>{{i+1+(exportResPageIndex-1)*pageSize}}</td>
+                        <td nzAlign='center'>{{ exportRe.eid }}</td>
+                        <td nzAlign='center'>{{ exportRe.eprice }}</td>
+                        <td nzAlign='center'>{{ exportRe.ecount }}</td>
+                        <td nzAlign='center'>{{ exportRe.etotalprice }}</td>
+                        <td nzAlign='center'>{{ exportRe.buyer }}</td>
+                        <td nzAlign='center'>{{ exportRe.detial }}</td>
+                        <td nzAlign='center'>{{ exportRe.imdate }}</td>
+                        <td nzAlign='center'>{{ exportRe.gname }}</td>
+                        <td nzAlign='center'>{{ exportRe.shipper }}</td>
+                        <td nzAlign='center'>{{ exportRe.bphone }}</td>
+                        <td nzAlign='center'>{{ exportRe.edate }}</td>
+                        <td> 
                             <a style="color: orange;"
                             nz-popconfirm
                             nzPopconfirmTitle="确定要删除吗？"
                             nzPopconfirmPlacement="bottom"
-                            (nzOnConfirm)="remove(user)"
-                            *ngIf="user.role!='超级管理员'"
+                            (nzOnConfirm)="confirm(exportRe)"
                             >删除</a>
                         </td>
                     </tr>
                 </tbody>
             </nz-table>
-        </div>
-        <nz-modal [(nzVisible)]="updateModel" nzTitle="单据修改" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+            <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="total" (nzPageIndexChange)="change($event)"></nz-pagination>
+        <!-- <nz-modal [(nzVisible)]="updateModel" nzTitle="单据修改" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
                 <span>用户名：</span><input nz-input placeholder="用户名" nzSize="large" style="margin-bottom: 10px;" disabled='true' [(ngModel)]="selectedUser.username"/>
                 <span>姓名：</span><input nz-input placeholder="姓名" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.actualname"/>
                 <span>联系方式：</span><input nz-input placeholder="联系方式" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.phone"/>
@@ -75,6 +75,6 @@
                     <nz-option nzValue="管理员" nzLabel="管理员"></nz-option>
                     <nz-option nzValue="普通用户" nzLabel="普通用户"></nz-option>
                 </nz-select>
-        </nz-modal>
+        </nz-modal> -->
         </nz-content>
         </nz-layout>

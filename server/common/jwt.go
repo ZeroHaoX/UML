@@ -55,6 +55,7 @@ func ParseToken(tokenString string)(token *jwt.Token,err error){
 		logs.Error(err)
 		return
 	}
+	
 	return
 }
 

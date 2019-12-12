@@ -23,7 +23,7 @@
 </div>
 
 <div class="table">
-    <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="users">
+    <nz-table nzBordered='true' [nzPageSize]=10 [nzData]="users"  nzShowPagination='false'>
         <thead>
             <tr>
                 <th nzAlign='center'>用户名</th>
@@ -53,11 +53,13 @@
             </tr>
         </tbody>
     </nz-table>
+    <nz-pagination style="margin-top: 20px;float:right;" [nzPageIndex]="pageIndex" [nzTotal]="total" (nzPageIndexChange)="change($event)"></nz-pagination>
 </div>
 <nz-modal [(nzVisible)]="updateModel" nzTitle="信息修改" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
         <span>用户名：</span><input nz-input placeholder="用户名" nzSize="large" style="margin-bottom: 10px;" disabled='true' [(ngModel)]="selectedUser.username"/>
         <span>姓名：</span><input nz-input placeholder="姓名" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.actualname"/>
         <span>联系方式：</span><input nz-input placeholder="联系方式" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.phone"/>
+        <span>密码：</span><input nz-input placeholder="密码" nzSize="large" style="margin-bottom: 10px;" [(ngModel)]="selectedUser.password"/>
         <div style="margin-top: 5px;">角色：</div>
         <nz-select [(ngModel)]="selectedUser.role" nzAllowClear nzPlaceHolder="Choose">
             <nz-option nzValue="管理员" nzLabel="管理员"></nz-option>

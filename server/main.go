@@ -32,6 +32,12 @@ func main(){
 	http.HandleFunc("/users/update",controllers.CheckTokenPreHand(controllers.UpdateUserHand))
 	http.HandleFunc("/users/del",controllers.CheckTokenPreHand(controllers.DelUserHand))
 	http.HandleFunc("/monthly",controllers.CheckTokenPreHand(controllers.MonthlyHand))
+	http.HandleFunc("/export/list",controllers.CheckTokenPreHand(controllers.ExportListHand))
+	http.HandleFunc("/export/del",controllers.CheckTokenPreHand(controllers.DelExportHand))
+	http.HandleFunc("/export/query",controllers.CheckTokenPreHand(controllers.SearchExportHand))
+	http.HandleFunc("/import/list",controllers.CheckTokenPreHand(controllers.ImportListHand))
+	http.HandleFunc("/import/query",controllers.CheckTokenPreHand(controllers.SearchImportHand))
+	http.HandleFunc("/import/del",controllers.CheckTokenPreHand(controllers.DelImportHand))
 	
 	err=http.ListenAndServe(":8080",nil)
 	if err!=nil{
